@@ -1,17 +1,23 @@
 {
-  "name": "tella-starter",
+  "name": "tella",
   "version": "0.1.0",
   "private": true,
   "scripts": {
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "eslint"
+    "lint": "eslint .",
+    "prisma:generate": "prisma generate",
+    "prisma:migrate": "prisma migrate dev"
   },
   "dependencies": {
+    "@prisma/client": "^6.8.2",
+    "clsx": "^2.1.1",
     "next": "16.2.6",
     "react": "19.2.4",
-    "react-dom": "19.2.4"
+    "react-dom": "19.2.4",
+    "tailwind-merge": "^3.3.0",
+    "zustand": "^5.0.8"
   },
   "devDependencies": {
     "@tailwindcss/postcss": "^4",
@@ -20,6 +26,7 @@
     "@types/react-dom": "^19",
     "eslint": "^9",
     "eslint-config-next": "16.2.6",
+    "prisma": "^6.8.2",
     "tailwindcss": "^4",
     "typescript": "^5"
   }
