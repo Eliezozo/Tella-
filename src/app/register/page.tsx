@@ -1,27 +1,48 @@
-import { SiteHeader } from "@/components/layout/site-header";
+import Link from "next/link";
+
+import { AuthLayout } from "@/components/layout/auth-layout";
+import { Button } from "@/components/ui/button";
+
+const fields = [
+  "Nom de l'atelier",
+  "Ville",
+  "Numéro WhatsApp",
+  "Spécialités",
+  "Description",
+  "Mot de passe",
+];
 
 export default function RegisterPage() {
   return (
-    <div className="min-h-screen">
-      <SiteHeader />
-      <main className="section-padding">
-        <div className="container-width max-w-3xl">
-          <div className="surface-card rounded-[32px] p-8">
-            <p className="text-xs font-semibold uppercase tracking-[0.22em] text-primary">
-              Inscription atelier
-            </p>
-            <h1 className="mt-3 font-display text-4xl text-secondary">Créer un espace professionnel Tella</h1>
-            <p className="mt-3 text-sm leading-6 text-muted">
-              Formulaire d’onboarding prévu pour React Hook Form + Zod, avec capture des informations d’atelier, ville, WhatsApp et spécialités.
-            </p>
-            <div className="mt-8 grid gap-4 sm:grid-cols-2">
-              {Array.from({ length: 6 }).map((_, index) => (
-                <div key={index} className="skeleton h-12 rounded-xl bg-surface" />
-              ))}
-            </div>
-          </div>
-        </div>
-      </main>
-    </div>
+    <AuthLayout
+      eyebrow="Inscription atelier"
+      title="Créer votre espace professionnel Tella"
+      description="Inscrivez votre atelier pour être visible par les clientes du Togo. Formulaire complet à venir avec validation."
+    >
+      <div className="mt-8 grid gap-4 sm:grid-cols-2">
+        {fields.map((field) => (
+          <label key={field} className="block sm:col-span-2 first:sm:col-span-1">
+            <span className="text-xs font-semibold uppercase tracking-[0.14em] text-muted">
+              {field}
+            </span>
+            <input
+              type="text"
+              placeholder={field}
+              disabled
+              className="mt-2 w-full rounded-md border border-border bg-background px-4 py-2.5 text-sm text-foreground"
+            />
+          </label>
+        ))}
+      </div>
+      <Button className="mt-8 w-full" href="/dashboard">
+        Créer mon atelier (démo)
+      </Button>
+      <p className="mt-4 text-center text-sm text-muted">
+        Déjà inscrite ?{" "}
+        <Link href="/login" className="font-semibold text-primary hover:text-primary-strong">
+          Se connecter
+        </Link>
+      </p>
+    </AuthLayout>
   );
 }

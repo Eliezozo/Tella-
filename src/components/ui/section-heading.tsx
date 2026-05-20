@@ -13,13 +13,9 @@ export function SectionHeading({
 }) {
   return (
     <div className={cn("max-w-2xl", align === "center" && "mx-auto text-center")}>
-      <p className="mb-4 text-xs font-semibold uppercase tracking-[0.28em] text-primary">
-        {eyebrow}
-      </p>
-      <h2 className="font-display text-3xl leading-tight text-secondary sm:text-4xl">
-        {title}
-      </h2>
-      <p className="mt-4 text-base leading-7 text-muted">{description}</p>
+      <p className="eyebrow mb-3">{eyebrow}</p>
+      <h2 className="heading-display heading-h2">{title}</h2>
+      <p className="mt-4 text-sm leading-7 text-muted">{description}</p>
     </div>
   );
 }

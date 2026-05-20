@@ -1,11 +1,17 @@
 import type { Metadata } from "next";
-import { Hammersmith_One, Inter } from "next/font/google";
+import { Cormorant_Garamond, DM_Sans, Inter } from "next/font/google";
 import "./globals.css";
 
-const headingFont = Hammersmith_One({
-  variable: "--font-heading",
-  weight: "400",
+const logoFont = Cormorant_Garamond({
+  variable: "--font-logo",
   subsets: ["latin"],
+  weight: ["400", "500", "600", "700"],
+});
+
+const headingFont = DM_Sans({
+  variable: "--font-heading",
+  subsets: ["latin"],
+  weight: ["400", "500", "600", "700"],
 });
 
 const bodyFont = Inter({
@@ -37,12 +43,26 @@ export const metadata: Metadata = {
     type: "website",
     locale: "fr_FR",
     siteName: "Tella",
+    images: [
+      {
+        url: "https://images.unsplash.com/photo-1558171813-4c08878a5171?w=1200&h=630&fit=crop&q=85",
+        width: 1200,
+        height: 630,
+        alt: "Tella — artisan couture",
+      },
+    ],
   },
   twitter: {
     card: "summary_large_image",
     title: "Tella",
     description:
       "La mode locale mérite une visibilité mondiale. Découvrez et développez votre atelier.",
+    images: [
+      "https://images.unsplash.com/photo-1558171813-4c08878a5171?w=1200&h=630&fit=crop&q=85",
+    ],
+  },
+  icons: {
+    icon: "https://ceedow.world/favicon.ico",
   },
 };
 
@@ -54,11 +74,9 @@ export default function RootLayout({
   return (
     <html
       lang="fr"
-      className={`${headingFont.variable} ${bodyFont.variable} h-full antialiased`}
+      className={`${logoFont.variable} ${headingFont.variable} ${bodyFont.variable} h-full antialiased`}
     >
-      <body className="app-shell min-h-full font-sans text-foreground">
-        {children}
-      </body>
+      <body className="app-shell min-h-full font-sans text-foreground">{children}</body>
     </html>
   );
 }

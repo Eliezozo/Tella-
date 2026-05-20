@@ -1,31 +1,44 @@
 import { DashboardShell } from "@/components/layout/dashboard-shell";
+import { Badge } from "@/components/ui/badge";
 
-const orders = [
-  ["CMD-104", "Robe cérémonie corail", "en cours"],
-  ["CMD-105", "Uniforme scolaire premium", "en attente"],
-  ["CMD-106", "Ensemble homme graphite", "livré"],
+const subscriptions = [
+  ["Atelier Ama", "Plan annuel", "actif", "30 juin 2026"],
+  ["Studio Kekeli", "Plan trimestriel", "relance", "15 avril 2026"],
+  ["Mawufe Design", "Plan annuel", "actif", "12 août 2026"],
+  ["Couture Lomé+", "Plan trimestriel", "expiré", "1 mars 2026"],
 ];
+
+const statusVariant = {
+  actif: "success" as const,
+  relance: "primary" as const,
+  expiré: "default" as const,
+};
 
 export default function DashboardOrdersPage() {
   return (
     <DashboardShell
-      title="Commandes"
-      description="Le flux de commandes est structuré pour évoluer vers un vrai suivi par statut, paiement et livraison."
+      title="Abonnements couturières"
+      description="Suivi des abonnements actifs, relances et renouvellements hors plateforme."
     >
-      <div className="surface-card rounded-[28px] p-6">
-        <div className="grid gap-4">
-          {orders.map(([id, label, status]) => (
+      <div className="surface-card overflow-hidden">
+        <div className="hidden grid-cols-[1.5fr_1fr_0.8fr_1fr] gap-4 border-b border-border px-5 py-3 text-[10px] font-semibold uppercase tracking-wider text-muted sm:grid">
+          <span>Atelier</span>
+          <span>Plan</span>
+          <span>Statut</span>
+          <span>Échéance</span>
+        </div>
+        <div className="divide-y divide-border">
+          {subscriptions.map(([name, plan, status, date]) => (
             <div
-              key={id}
-              className="flex flex-col justify-between gap-4 rounded-[24px] border border-border bg-white p-5 sm:flex-row sm:items-center"
+              key={name}
+              className="grid gap-2 px-5 py-4 sm:grid-cols-[1.5fr_1fr_0.8fr_1fr] sm:items-center sm:gap-4"
             >
-              <div>
-                <p className="text-xs font-semibold uppercase tracking-[0.18em] text-primary">{id}</p>
-                <p className="mt-2 text-lg font-semibold text-secondary">{label}</p>
-              </div>
-              <span className="rounded-full bg-secondary/8 px-4 py-2 text-sm font-medium text-secondary">
+              <p className="text-sm font-semibold text-foreground">{name}</p>
+              <p className="text-sm text-muted">{plan}</p>
+              <Badge variant={statusVariant[status as keyof typeof statusVariant] ?? "default"}>
                 {status}
-              </span>
+              </Badge>
+              <p className="text-sm text-muted">{date}</p>
             </div>
           ))}
         </div>

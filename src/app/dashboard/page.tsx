@@ -1,33 +1,43 @@
 import { DashboardShell } from "@/components/layout/dashboard-shell";
 
 const stats = [
-  ["Vues profil", "5 240", "+12% cette semaine"],
-  ["Clics WhatsApp", "318", "Canal principal d’acquisition"],
-  ["Commandes", "42", "11 en cours de production"],
-  ["Avis", "126", "Note moyenne 4.9/5"],
+  ["Couturières abonnées", "48", "+6 ce mois"],
+  ["Abonnements actifs", "41", "7 à relancer"],
+  ["Utilisatrices clientes", "1 284", "+18% ce mois"],
+  ["Demandes envoyées", "318", "Canal principal: WhatsApp"],
 ];
 
 export default function DashboardPage() {
   return (
     <DashboardShell
-      title="Overview"
-      description="Vue d’ensemble opérationnelle pour suivre la visibilité, les clics WhatsApp et les commandes."
+      title="Vue d'ensemble admin"
+      description="Suivi des couturières inscrites, abonnements et activité générée par chaque atelier."
     >
-      <div className="grid gap-6 md:grid-cols-2 xl:grid-cols-4">
+      <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-4">
         {stats.map(([label, value, note]) => (
-          <article key={label} className="surface-card rounded-[28px] p-6">
-            <p className="text-sm text-muted">{label}</p>
-            <p className="mt-3 font-display text-4xl text-secondary">{value}</p>
-            <p className="mt-3 text-sm text-primary">{note}</p>
+          <article key={label} className="surface-card p-5">
+            <p className="text-xs text-muted">{label}</p>
+            <p className="heading-display mt-2 text-3xl">{value}</p>
+            <p className="mt-2 text-xs text-primary">{note}</p>
           </article>
         ))}
       </div>
-      <div className="surface-card rounded-[28px] p-6">
-        <p className="text-sm font-semibold text-secondary">Activité récente</p>
-        <div className="mt-5 space-y-4 text-sm text-muted">
-          <p>Commande mariage confirmée pour samedi prochain.</p>
-          <p>12 nouveaux clics WhatsApp depuis le statut partagé ce matin.</p>
-          <p>3 avis reçus après livraison sur Lomé.</p>
+      <div className="grid gap-4 lg:grid-cols-2">
+        <div className="surface-card p-5">
+          <p className="text-sm font-semibold text-foreground">Suivi des ateliers</p>
+          <div className="mt-4 space-y-3 text-sm text-muted">
+            <p>Atelier Ama: abonnement annuel actif jusqu&apos;au 30 juin 2026.</p>
+            <p>Studio Kekeli: relance trimestrielle à faire.</p>
+            <p>Mawufe Design: 84 nouvelles vues profil cette semaine.</p>
+          </div>
+        </div>
+        <div className="surface-card p-5">
+          <p className="text-sm font-semibold text-foreground">Performance plateforme</p>
+          <div className="mt-4 space-y-3 text-sm text-muted">
+            <p>Top canal: WhatsApp direct depuis les profils.</p>
+            <p>Top recherche: robes cérémonie et traditionnel.</p>
+            <p>Paiements: suivi manuel côté administration.</p>
+          </div>
         </div>
       </div>
     </DashboardShell>

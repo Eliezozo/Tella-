@@ -1,27 +1,48 @@
-import { SiteHeader } from "@/components/layout/site-header";
+import Link from "next/link";
+
+import { AuthLayout } from "@/components/layout/auth-layout";
+import { Button } from "@/components/ui/button";
 
 export default function LoginPage() {
   return (
-    <div className="min-h-screen">
-      <SiteHeader />
-      <main className="section-padding">
-        <div className="container-width max-w-2xl">
-          <div className="surface-card rounded-[32px] p-8">
-            <p className="text-xs font-semibold uppercase tracking-[0.22em] text-primary">
-              Connexion
-            </p>
-            <h1 className="mt-3 font-display text-4xl text-secondary">Accéder à mon atelier</h1>
-            <p className="mt-3 text-sm leading-6 text-muted">
-              Écran prêt à connecter à Auth.js / NextAuth avec email, téléphone ou OAuth.
-            </p>
-            <div className="mt-8 grid gap-4">
-              <div className="skeleton h-12 rounded-xl bg-surface" />
-              <div className="skeleton h-12 rounded-xl bg-surface" />
-              <div className="skeleton h-12 rounded-xl bg-primary/20" />
-            </div>
-          </div>
-        </div>
-      </main>
-    </div>
+    <AuthLayout
+      eyebrow="Connexion"
+      title="Accéder à mon atelier"
+      description="Connectez-vous pour gérer votre profil, vos collections et votre visibilité sur Tella."
+    >
+      <div className="mt-8 space-y-4">
+        <label className="block">
+          <span className="text-xs font-semibold uppercase tracking-[0.14em] text-muted">
+            Email ou téléphone
+          </span>
+          <input
+            type="text"
+            placeholder="exemple@email.com"
+            disabled
+            className="mt-2 w-full rounded-md border border-border bg-background px-4 py-2.5 text-sm text-foreground"
+          />
+        </label>
+        <label className="block">
+          <span className="text-xs font-semibold uppercase tracking-[0.14em] text-muted">
+            Mot de passe
+          </span>
+          <input
+            type="password"
+            placeholder="••••••••"
+            disabled
+            className="mt-2 w-full rounded-md border border-border bg-background px-4 py-2.5 text-sm text-foreground"
+          />
+        </label>
+      </div>
+      <Button className="mt-8 w-full" href="/dashboard">
+        Se connecter (démo)
+      </Button>
+      <p className="mt-4 text-center text-sm text-muted">
+        Pas encore de compte ?{" "}
+        <Link href="/register" className="font-semibold text-primary hover:text-primary-strong">
+          Créer mon atelier
+        </Link>
+      </p>
+    </AuthLayout>
   );
 }

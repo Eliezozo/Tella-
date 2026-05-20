@@ -1,11 +1,13 @@
+import Link from "next/link";
 import { notFound } from "next/navigation";
 
 import { CreationCard } from "@/components/cards/creation-card";
-import { SiteFooter } from "@/components/layout/site-footer";
-import { SiteHeader } from "@/components/layout/site-header";
+import { PageShell } from "@/components/layout/page-shell";
+import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import { OptimizedImage } from "@/components/ui/optimized-image";
 import { buildWhatsappLink } from "@/hooks/build-whatsapp-link";
-import { creations, reviews, tailorProfiles } from "@/lib/mock-data";
+import { getTailorProfilePage } from "@/services/tailor-service";
 
 export default async function TailorProfilePage({
   params,
@@ -18,100 +20,131 @@ export default async function TailorProfilePage({
     notFound();
   }
 
-  const profile = tailorProfiles.find((item) => item.handle === handle);
+  const data = await getTailorProfilePage(handle);
 
-  if (!profile) {
+  if (!data) {
     notFound();
   }
 
-  const portfolio = creations.filter((item) => item.tailorId === profile.id);
-  const profileReviews = reviews.filter((item) => item.tailorId === profile.id);
+  const { profile, portfolio, reviews: profileReviews } = data;
   const whatsappHref = buildWhatsappLink(
     profile.whatsapp,
     "Bonjour, je vous contacte depuis Tella concernant un modèle.",
   );
 
   return (
-    <div className="min-h-screen">
-      <SiteHeader />
-      <main>
-        <section className="section-padding">
-          <div className="container-width grid gap-8 lg:grid-cols-[1fr_320px]">
-            <div className="surface-card rounded-[36px] p-6 sm:p-8">
-              <div className="rounded-[28px] bg-gradient-to-br from-[#ff8b7d] via-[#ffd0c8] to-[#fff5f1] p-6">
-                <p className="text-xs font-semibold uppercase tracking-[0.22em] text-primary">Profil couturière</p>
-                <h1 className="mt-3 font-display text-4xl text-secondary sm:text-5xl">
-                  {profile.atelierName}
-                </h1>
-                <p className="mt-3 text-sm text-secondary/80">{profile.heroLabel}</p>
+    <PageShell>
+      <section className="section-padding">
+        <div className="container-width grid gap-6 lg:grid-cols-[1fr_280px]">
+          <div className="surface-card overflow-hidden">
+            <div className="relative h-40 w-full sm:h-48">
+              {profile.coverUrl ? (
+                <OptimizedImage
+                  src={profile.coverUrl}
+                  alt={`Bannière ${profile.atelierName}`}
+                  fill
+                  priority
+                  sizes="100vw"
+                />
+              ) : (
+                <div className="h-full w-full bg-surface-strong" />
+              )}
+              <div className="absolute inset-0 bg-secondary-dark/30" />
+            </div>
+
+            <div className="relative px-5 pb-6 sm:px-6">
+              {profile.avatarUrl ? (
+                <div className="absolute -top-8 h-16 w-16 overflow-hidden rounded-md border-2 border-surface">
+                  <OptimizedImage
+                    src={profile.avatarUrl}
+                    alt={profile.atelierName}
+                    fill
+                    sizes="64px"
+                  />
+                </div>
+              ) : null}
+
+              <div className={profile.avatarUrl ? "pt-10" : "pt-5"}>
+                <Badge variant="primary">{profile.city}</Badge>
+                <h1 className="heading-display heading-h2 mt-2">{profile.atelierName}</h1>
+                <p className="mt-2 text-sm text-muted">{profile.heroLabel}</p>
               </div>
 
-              <div className="mt-6 grid gap-6 lg:grid-cols-[1.2fr_0.8fr]">
+              <div className="mt-5 grid gap-5 lg:grid-cols-[1.2fr_0.8fr]">
                 <div>
                   <p className="text-sm leading-7 text-muted">{profile.description}</p>
-                  <div className="mt-6 flex flex-wrap gap-2">
+                  <div className="mt-4 flex flex-wrap gap-1.5">
                     {profile.specialties.map((specialty) => (
-                      <span
-                        key={specialty}
-                        className="rounded-full border border-primary/20 bg-primary/10 px-3 py-1 text-xs font-semibold text-primary"
-                      >
+                      <Badge key={specialty} variant="default">
                         {specialty}
-                      </span>
+                      </Badge>
                     ))}
                   </div>
                 </div>
-                <div className="rounded-[28px] bg-surface p-5">
-                  <p className="text-sm font-semibold text-secondary">Aperçu</p>
-                  <div className="mt-4 space-y-3 text-sm text-muted">
-                    <p>Ville: {profile.city}</p>
-                    <p>WhatsApp: {profile.whatsapp}</p>
-                    <p>Avis: {profile.rating}/5</p>
-                    <p>Commandes terminées: {profile.completedOrders}</p>
+                <div className="rounded-md border border-border bg-background p-4">
+                  <p className="text-sm font-semibold text-foreground">Informations</p>
+                  <div className="mt-3 space-y-2 text-sm text-muted">
+                    <p>Ville : {profile.city}</p>
+                    <p>
+                      Note : {profile.rating}/5 ({profile.reviewsCount} avis)
+                    </p>
+                    <p>{profile.completedOrders} clientes accompagnées</p>
+                    <p>{profile.responseRate}% de réponse</p>
                   </div>
                 </div>
               </div>
 
-              <div className="mt-10 grid gap-6 sm:grid-cols-2 xl:grid-cols-3">
-                {portfolio.map((creation) => (
-                  <CreationCard key={creation.id} creation={creation} />
-                ))}
-              </div>
-            </div>
-
-            <aside className="space-y-6">
-              <div className="surface-card rounded-[32px] p-6">
-                <p className="text-xs font-semibold uppercase tracking-[0.22em] text-primary">
-                  Contacter l’atelier
-                </p>
-                <p className="mt-3 text-sm leading-6 text-muted">
-                  Message pré-rempli pour accélérer la prise de contact et éviter les frictions sur mobile.
-                </p>
-                <Button href={whatsappHref} className="mt-6 w-full">
-                  Ouvrir WhatsApp
-                </Button>
-              </div>
-
-              <div className="surface-card rounded-[32px] p-6">
-                <p className="text-sm font-semibold text-secondary">Avis clients</p>
-                <div className="mt-5 space-y-4">
-                  {profileReviews.map((review) => (
-                    <article key={review.id} className="rounded-[24px] bg-white p-4">
-                      <p className="text-primary">
-                        {Array.from({ length: review.rating }, () => "★").join("")}
-                      </p>
-                      <p className="mt-3 text-sm leading-6 text-muted">{review.comment}</p>
-                      <p className="mt-3 text-xs font-semibold uppercase tracking-[0.18em] text-secondary">
-                        {review.author}
-                      </p>
-                    </article>
+              <div className="mt-8">
+                <h2 className="heading-display text-xl">Collections</h2>
+                <div className="mt-4 grid gap-4 sm:grid-cols-2 xl:grid-cols-3">
+                  {portfolio.map((creation) => (
+                    <CreationCard
+                      key={creation.id}
+                      creation={creation}
+                      atelierName={profile.atelierName}
+                    />
                   ))}
                 </div>
               </div>
-            </aside>
+            </div>
           </div>
-        </section>
-      </main>
-      <SiteFooter />
-    </div>
+
+          <aside className="space-y-4 lg:sticky lg:top-20 lg:self-start">
+            <div className="surface-card p-5">
+              <p className="eyebrow">Contacter</p>
+              <p className="mt-2 text-sm leading-6 text-muted">
+                Message pré-rempli pour accélérer la prise de contact.
+              </p>
+              <Button href={whatsappHref} className="mt-4 w-full">
+                Ouvrir WhatsApp
+              </Button>
+              <Link
+                href={`/search?city=${encodeURIComponent(profile.city)}`}
+                className="mt-3 block text-center text-xs text-primary hover:underline"
+              >
+                Autres ateliers à {profile.city}
+              </Link>
+            </div>
+
+            <div className="surface-card p-5">
+              <p className="text-sm font-semibold text-foreground">Avis clientes</p>
+              <div className="mt-4 space-y-3">
+                {profileReviews.map((review) => (
+                  <article key={review.id} className="rounded-md border border-border bg-background p-3">
+                    <p className="text-xs text-primary">
+                      {Array.from({ length: review.rating }, () => "★").join("")}
+                    </p>
+                    <p className="mt-2 text-sm leading-6 text-muted">{review.comment}</p>
+                    <p className="mt-2 text-xs font-semibold uppercase tracking-wide text-secondary">
+                      {review.author}
+                    </p>
+                  </article>
+                ))}
+              </div>
+            </div>
+          </aside>
+        </div>
+      </section>
+    </PageShell>
   );
 }

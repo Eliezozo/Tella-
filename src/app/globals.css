@@ -1,17 +1,27 @@
 @import "tailwindcss";
 
 :root {
-  --background: #fffaf8;
-  --foreground: #111111;
-  --surface: #fff7f6;
-  --surface-strong: #fff1ee;
-  --primary: #ff6f61;
-  --primary-strong: #e65a4d;
-  --secondary: #374151;
-  --muted: #6b7280;
-  --border: rgba(17, 17, 17, 0.08);
-  --success: #1f8a70;
-  --warning: #f4a261;
+  --background: #fdfaf6;
+  --foreground: #1a0d06;
+  --surface: #fefbf8;
+  --surface-strong: #f5efe6;
+  --primary: #c4522a;
+  --primary-strong: #a84322;
+  --primary-soft: rgba(196, 82, 42, 0.08);
+  --primary-glow: rgba(196, 82, 42, 0.12);
+  --secondary: #a99170;
+  --secondary-dark: #1a0d06;
+  --muted: #6b5d52;
+  --border: rgba(26, 13, 6, 0.1);
+  --link: #1a0d06;
+  --on-primary: #fdfaf6;
+  --on-secondary-dark: #fefefc;
+  --success: #2d6a4f;
+  --warning: #bc6c25;
+  --radius: 6px;
+  --font-size-h1: 4rem;
+  --font-size-h2: 2.8rem;
+  --font-size-body: 0.78rem;
 }
 
 @theme inline {
@@ -21,13 +31,19 @@
   --color-surface-strong: var(--surface-strong);
   --color-primary: var(--primary);
   --color-primary-strong: var(--primary-strong);
+  --color-primary-soft: var(--primary-soft);
   --color-secondary: var(--secondary);
+  --color-secondary-dark: var(--secondary-dark);
   --color-muted: var(--muted);
   --color-border: var(--border);
+  --color-link: var(--link);
+  --color-on-primary: var(--on-primary);
+  --color-on-secondary-dark: var(--on-secondary-dark);
   --color-success: var(--success);
   --color-warning: var(--warning);
   --font-sans: var(--font-body);
   --font-display: var(--font-heading);
+  --radius-md: var(--radius);
 }
 
 * {
@@ -41,7 +57,8 @@ html {
 body {
   background: var(--background);
   color: var(--foreground);
-  font-family: var(--font-body), system-ui, sans-serif;
+  font-family: var(--font-body), "DM Sans", system-ui, sans-serif;
+  font-size: var(--font-size-body);
   min-height: 100vh;
   text-rendering: optimizeLegibility;
 }
@@ -52,12 +69,11 @@ button {
     color 180ms ease,
     background-color 180ms ease,
     border-color 180ms ease,
-    opacity 180ms ease,
-    transform 180ms ease;
+    opacity 180ms ease;
 }
 
 ::selection {
-  background: color-mix(in srgb, var(--primary) 24%, white);
+  background: color-mix(in srgb, var(--primary) 20%, white);
 }
 
 .text-balance {
@@ -65,31 +81,60 @@ button {
 }
 
 .surface-card {
-  background:
-    linear-gradient(180deg, rgba(255, 255, 255, 0.96), rgba(255, 247, 246, 0.92));
+  background: var(--surface);
   border: 1px solid var(--border);
-  box-shadow: 0 18px 60px rgba(17, 17, 17, 0.06);
+  border-radius: var(--radius);
 }
 
 .app-shell {
-  background:
-    radial-gradient(circle at top left, rgba(255, 111, 97, 0.18), transparent 26%),
-    radial-gradient(circle at top right, rgba(55, 65, 81, 0.08), transparent 22%),
-    linear-gradient(180deg, #fffaf8 0%, #ffffff 42%, #fff7f6 100%);
+  background: var(--background);
 }
 
 .mesh-panel {
-  background:
-    linear-gradient(135deg, rgba(255, 111, 97, 0.14), transparent 38%),
-    linear-gradient(225deg, rgba(55, 65, 81, 0.1), transparent 34%),
-    rgba(255, 255, 255, 0.9);
+  background: var(--surface-strong);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
 }
 
-.hero-grid {
-  background-image:
-    linear-gradient(rgba(17, 17, 17, 0.04) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(17, 17, 17, 0.04) 1px, transparent 1px);
-  background-size: 24px 24px;
+.illustration-frame {
+  border: 1px solid var(--border);
+  overflow: hidden;
+  border-radius: var(--radius);
+}
+
+.text-gradient-primary {
+  color: var(--primary);
+}
+
+.heading-display {
+  font-family: var(--font-heading), "DM Sans", sans-serif;
+  font-weight: 600;
+  letter-spacing: -0.02em;
+  color: var(--foreground);
+}
+
+.heading-h1 {
+  font-size: clamp(2.5rem, 5vw, var(--font-size-h1));
+  line-height: 1.05;
+}
+
+.heading-h2 {
+  font-size: clamp(1.75rem, 3.5vw, var(--font-size-h2));
+  line-height: 1.15;
+}
+
+.logo-wordmark {
+  font-family: var(--font-logo), "Cormorant Garamond", Georgia, serif;
+  font-weight: 600;
+  line-height: 1;
+}
+
+.eyebrow {
+  font-size: 0.6875rem;
+  font-weight: 600;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--secondary);
 }
 
 .section-padding {
@@ -110,17 +155,86 @@ button {
   position: absolute;
   inset: 0;
   transform: translateX(-100%);
-  background: linear-gradient(
-    90deg,
-    transparent,
-    rgba(255, 255, 255, 0.7),
-    transparent
-  );
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.7), transparent);
   animation: shimmer 1.6s infinite;
 }
 
 @keyframes shimmer {
   100% {
     transform: translateX(100%);
+  }
+}
+
+/* Hero — apparitions élégantes */
+@keyframes heroFadeUp {
+  from {
+    opacity: 0;
+    transform: translateY(1.75rem);
+    filter: blur(6px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+    filter: blur(0);
+  }
+}
+
+@keyframes heroFadeInRight {
+  from {
+    opacity: 0;
+    transform: translateX(2.5rem) scale(0.97);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0) scale(1);
+  }
+}
+
+@keyframes heroImageReveal {
+  from {
+    opacity: 0;
+    transform: scale(1.06);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+.hero-animate {
+  animation-duration: 0.9s;
+  animation-timing-function: cubic-bezier(0.22, 1, 0.36, 1);
+  animation-fill-mode: both;
+}
+
+.hero-animate-up {
+  animation-name: heroFadeUp;
+}
+
+.hero-animate-right {
+  animation-name: heroFadeInRight;
+}
+
+.hero-animate-image {
+  animation-name: heroImageReveal;
+  animation-duration: 1.1s;
+}
+
+.hero-delay-1 { animation-delay: 0.05s; }
+.hero-delay-2 { animation-delay: 0.15s; }
+.hero-delay-3 { animation-delay: 0.28s; }
+.hero-delay-4 { animation-delay: 0.4s; }
+.hero-delay-5 { animation-delay: 0.52s; }
+.hero-delay-6 { animation-delay: 0.65s; }
+.hero-delay-7 { animation-delay: 0.78s; }
+.hero-delay-8 { animation-delay: 0.9s; }
+.hero-delay-9 { animation-delay: 1.05s; }
+
+@media (prefers-reduced-motion: reduce) {
+  .hero-animate {
+    animation: none;
+    opacity: 1;
+    filter: none;
+    transform: none;
   }
 }

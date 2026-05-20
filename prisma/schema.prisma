@@ -7,13 +7,26 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+enum UserRole {
+  CLIENT
+  TAILOR
+  ADMIN
+}
+
+enum SubscriptionStatus {
+  ACTIVE
+  RELANCE
+  EXPIRED
+}
+
 model User {
   id            String         @id @default(cuid())
   name          String?
   email         String?        @unique
   phone         String?        @unique
+  passwordHash  String?
   image         String?
-  role          String         @default("tailor")
+  role          UserRole       @default(TAILOR)
   createdAt     DateTime       @default(now())
   updatedAt     DateTime       @updatedAt
   tailorProfile TailorProfile?
@@ -24,28 +37,33 @@ model User {
 }
 
 model TailorProfile {
-  id             String      @id @default(cuid())
-  userId         String      @unique
-  handle         String      @unique
-  atelierName    String
-  city           String
-  bio            String
-  whatsapp       String
-  bannerUrl      String?
-  avatarUrl      String?
-  specialties    String[]
-  responseRate   Int         @default(0)
-  viewsCount     Int         @default(0)
-  whatsappClicks Int         @default(0)
-  averageRating  Float       @default(0)
-  createdAt      DateTime    @default(now())
-  updatedAt      DateTime    @updatedAt
-  user           User        @relation(fields: [userId], references: [id], onDelete: Cascade)
-  portfolios     Portfolio[]
-  posts          Post[]
-  reviews        Review[]
-  orders         Order[]
-  favorites      Favorite[]
+  id              String         @id @default(cuid())
+  userId          String         @unique
+  handle          String         @unique
+  atelierName     String
+  city            String
+  bio             String
+  heroLabel       String
+  whatsapp        String
+  bannerUrl       String?
+  avatarUrl       String?
+  specialties     String[]
+  responseRate    Int            @default(0)
+  viewsCount      Int            @default(0)
+  whatsappClicks  Int            @default(0)
+  averageRating   Float          @default(0)
+  reviewsCount    Int            @default(0)
+  completedOrders Int            @default(0)
+  isPublished     Boolean        @default(true)
+  createdAt       DateTime       @default(now())
+  updatedAt       DateTime       @updatedAt
+  user            User           @relation(fields: [userId], references: [id], onDelete: Cascade)
+  portfolios      Portfolio[]
+  posts           Post[]
+  reviews         Review[]
+  orders          Order[]
+  favorites       Favorite[]
+  subscription    Subscription?
 }
 
 model Category {
@@ -58,15 +76,18 @@ model Category {
 
 model Post {
   id              String        @id @default(cuid())
+  slug            String        @unique
   tailorProfileId String
   categoryId      String?
   title           String
-  description     String
+  description     String        @default("")
   mediaUrl        String
-  mediaType       String
+  mediaType       String        @default("image")
   priceFrom       Int?
-  turnaroundDays  Int?
+  turnaroundLabel String?
+  likesCount      Int           @default(0)
   isPublished     Boolean       @default(true)
+  metadata        Json?
   createdAt       DateTime      @default(now())
   updatedAt       DateTime      @updatedAt
   tailorProfile   TailorProfile @relation(fields: [tailorProfileId], references: [id], onDelete: Cascade)
@@ -130,4 +151,17 @@ model Favorite {
   tailorProfile   TailorProfile @relation(fields: [tailorProfileId], references: [id], onDelete: Cascade)
 
   @@unique([userId, tailorProfileId])
+}
+
+model Subscription {
+  id              String             @id @default(cuid())
+  tailorProfileId String             @unique
+  planKey         String
+  status          SubscriptionStatus @default(ACTIVE)
+  amount          Int
+  renewsAt        DateTime?
+  notes           String?
+  createdAt       DateTime           @default(now())
+  updatedAt       DateTime           @updatedAt
+  tailorProfile   TailorProfile      @relation(fields: [tailorProfileId], references: [id], onDelete: Cascade)
 }

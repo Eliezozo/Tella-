@@ -7,8 +7,8 @@ export default function manifest(): MetadataRoute.Manifest {
     description: "Marketplace couture et visibilité digitale pour couturières au Togo.",
     start_url: "/",
     display: "standalone",
-    background_color: "#fffaf8",
-    theme_color: "#ff6f61",
+    background_color: "#fdfaf6",
+    theme_color: "#c4522a",
     lang: "fr",
   };
 }

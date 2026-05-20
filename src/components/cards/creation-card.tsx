@@ -1,33 +1,53 @@
-import { categoryLabels, tailorProfiles } from "@/lib/mock-data";
+import Link from "next/link";
+
+import { OptimizedImage } from "@/components/ui/optimized-image";
+import { Badge } from "@/components/ui/badge";
+import { categoryLabels } from "@/lib/constants/categories";
 import { formatCurrency } from "@/lib/utils";
 import type { Creation } from "@/types";
+import { cn } from "@/lib/utils";
 
-export function CreationCard({ creation }: { creation: Creation }) {
-  const tailor = tailorProfiles.find((item) => item.id === creation.tailorId);
-
+export function CreationCard({
+  creation,
+  atelierName,
+}: {
+  creation: Creation;
+  atelierName?: string;
+}) {
   return (
-    <article className="surface-card overflow-hidden rounded-[24px]">
-      <div className={`h-52 bg-gradient-to-br ${creation.imageClassName}`} />
-      <div className="space-y-4 p-5">
-        <div className="flex items-start justify-between gap-4">
+    <Link
+      href={`/boutique/${creation.slug}`}
+      className="group surface-card block overflow-hidden transition-opacity hover:opacity-95"
+    >
+      <div className="relative h-48 w-full overflow-hidden">
+        {creation.imageUrl ? (
+          <OptimizedImage
+            src={creation.imageUrl}
+            alt={creation.title}
+            fill
+            sizes="400px"
+            className="transition-transform duration-300 group-hover:scale-[1.02]"
+          />
+        ) : (
+          <div className={cn("h-full w-full bg-surface-strong", creation.imageClassName)} />
+        )}
+      </div>
+      <div className="space-y-3 p-4">
+        <div className="flex items-start justify-between gap-3">
           <div>
-            <p className="text-xs font-semibold uppercase tracking-[0.22em] text-primary">
-              {categoryLabels[creation.category]}
-            </p>
-            <h3 className="mt-2 text-lg font-semibold text-secondary">{creation.title}</h3>
-            <p className="mt-1 text-sm text-muted">{tailor?.atelierName}</p>
+            <Badge variant="primary">{categoryLabels[creation.category]}</Badge>
+            <h3 className="heading-display mt-2 text-base">{creation.title}</h3>
+            {atelierName ? <p className="mt-0.5 text-xs text-muted">{atelierName}</p> : null}
           </div>
-          <span className="rounded-full bg-secondary/6 px-3 py-1 text-xs font-medium text-secondary">
-            {creation.turnaround}
-          </span>
+          <span className="text-xs font-medium text-secondary">{creation.turnaround}</span>
         </div>
-        <div className="flex items-center justify-between text-sm">
-          <span className="font-semibold text-secondary">
+        <div className="flex items-center justify-between text-xs">
+          <span className="font-semibold text-foreground">
             {creation.priceFrom ? `Dès ${formatCurrency(creation.priceFrom)}` : "Prix sur demande"}
           </span>
           <span className="text-muted">{creation.likes} favoris</span>
         </div>
       </div>
-    </article>
+    </Link>
   );
 }

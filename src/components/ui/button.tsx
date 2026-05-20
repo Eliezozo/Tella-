@@ -11,11 +11,9 @@ type ButtonProps = {
 };
 
 const styles = {
-  primary:
-    "bg-primary text-white shadow-[0_14px_30px_rgba(255,111,97,0.28)] hover:-translate-y-0.5 hover:bg-primary-strong",
-  secondary:
-    "border border-primary/40 bg-white text-primary hover:-translate-y-0.5 hover:border-primary hover:bg-primary/5",
-  ghost: "bg-transparent text-secondary hover:bg-secondary/5",
+  primary: "bg-primary text-on-primary hover:bg-primary-strong",
+  secondary: "bg-secondary-dark text-on-secondary-dark hover:opacity-90",
+  ghost: "bg-transparent text-foreground hover:bg-primary-soft",
 };
 
 export function Button({
@@ -25,7 +23,7 @@ export function Button({
   className,
 }: ButtonProps) {
   const classes = cn(
-    "inline-flex min-h-12 items-center justify-center rounded-xl px-5 py-3 text-sm font-semibold",
+    "inline-flex min-h-11 items-center justify-center rounded-md px-5 py-2.5 text-sm font-semibold tracking-wide",
     styles[variant],
     className,
   );
@@ -38,5 +36,5 @@ export function Button({
     );
   }
 
-  return <button className={classes}>{children}</button>;
+  return <button type="button" className={classes}>{children}</button>;
 }
