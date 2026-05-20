@@ -31,6 +31,8 @@ export const prismaAuthRepository: AuthRepository = {
       role: row.role,
       tailorProfileId: row.tailorProfile?.id ?? null,
       handle: row.tailorProfile?.handle ?? null,
+      isApproved:
+        row.role !== "TAILOR" || (row.tailorProfile?.isApproved ?? false),
     };
   },
 
@@ -66,9 +68,10 @@ export const prismaAuthRepository: AuthRepository = {
           atelierName: payload.atelierName,
           city: payload.city,
           bio: payload.description,
-          heroLabel: `Découvrez ${payload.atelierName}`,
+          heroLabel: payload.heroLabel ?? `Découvrez ${payload.atelierName}`,
           whatsapp: payload.whatsapp,
           specialties: payload.specialties,
+          isApproved: false,
           isPublished: false,
         },
       });

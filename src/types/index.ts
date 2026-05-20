@@ -21,6 +21,10 @@ export interface TailorProfile {
   heroLabel: string;
   avatarUrl?: string;
   coverUrl?: string;
+  /** Validation admin — requis pour se connecter (couturière). */
+  isApproved?: boolean;
+  /** Visibilité publique (explore, profil) — activé par l'admin. */
+  isPublished?: boolean;
 }
 
 export interface Creation {

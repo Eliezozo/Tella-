@@ -36,10 +36,12 @@ function mapPrismaTailor(record: {
   };
 }
 
+const publicTailorWhere = { isApproved: true, isPublished: true } as const;
+
 export const prismaTailorRepository: TailorRepository = {
   async findAll() {
     const rows = await prisma.tailorProfile.findMany({
-      where: { isPublished: true },
+      where: publicTailorWhere,
       orderBy: { atelierName: "asc" },
     });
     return rows.map(mapPrismaTailor);
@@ -47,7 +49,7 @@ export const prismaTailorRepository: TailorRepository = {
 
   async findFeatured(limit) {
     const rows = await prisma.tailorProfile.findMany({
-      where: { isPublished: true },
+      where: publicTailorWhere,
       orderBy: { viewsCount: "desc" },
       take: limit,
     });
@@ -57,7 +59,7 @@ export const prismaTailorRepository: TailorRepository = {
   async findByHandle(handle) {
     const normalized = handle.startsWith("@") ? handle : `@${handle}`;
     const row = await prisma.tailorProfile.findFirst({
-      where: { handle: normalized, isPublished: true },
+      where: { handle: normalized, ...publicTailorWhere },
     });
     return row ? mapPrismaTailor(row) : null;
   },
@@ -71,7 +73,7 @@ export const prismaTailorRepository: TailorRepository = {
     const { query, city } = filters;
     const rows = await prisma.tailorProfile.findMany({
       where: {
-        isPublished: true,
+        ...publicTailorWhere,
         ...(city ? { city: { equals: city, mode: "insensitive" } } : {}),
         ...(query
           ? {
@@ -91,7 +93,7 @@ export const prismaTailorRepository: TailorRepository = {
 
   async getCities() {
     const rows = await prisma.tailorProfile.findMany({
-      where: { isPublished: true },
+      where: publicTailorWhere,
       select: { city: true },
       distinct: ["city"],
     });

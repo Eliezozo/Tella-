@@ -1,20 +1,21 @@
 "use server";
 
 import { AuthError } from "next-auth";
+import { redirect } from "next/navigation";
 
 import { signIn, signOut } from "@/auth";
+import { isNextNavigationError } from "@/lib/next-errors";
+import type { AuthFormState } from "@/lib/auth-form-state";
+import { parseRegisterFormData } from "@/lib/parse-register-form";
 import {
+  ACCOUNT_PENDING_MESSAGE,
   AuthServiceError,
+  authenticateUser,
   registerTailor,
 } from "@/services/auth-service";
 
-export type AuthFormState = {
-  ok: boolean;
-  message?: string;
-  fieldErrors?: Record<string, string[]>;
-};
-
-const initialState: AuthFormState = { ok: false };
+const REGISTER_SUCCESS_MESSAGE =
+  "Inscription enregistrée. Votre compte sera activé après validation par l'équipe Tella — vous pourrez alors vous connecter.";
 
 function flattenFieldErrors(
   errors?: Record<string, string[] | undefined>,
@@ -32,23 +33,16 @@ export async function registerTailorAction(
   formData: FormData,
 ): Promise<AuthFormState> {
   try {
-    const user = await registerTailor({
-      atelierName: String(formData.get("atelierName") ?? ""),
-      city: String(formData.get("city") ?? ""),
-      whatsapp: String(formData.get("whatsapp") ?? ""),
-      specialties: String(formData.get("specialties") ?? ""),
-      description: String(formData.get("description") ?? ""),
-      email: String(formData.get("email") ?? ""),
-      password: String(formData.get("password") ?? ""),
-    });
+    const created = await registerTailor(parseRegisterFormData(formData));
 
-    await signIn("credentials", {
-      identifier: user.email ?? "",
-      password: String(formData.get("password") ?? ""),
-      redirectTo: "/dashboard",
-    });
-
-    return { ok: true };
+    return {
+      ok: true,
+      pendingApproval: true,
+      message: REGISTER_SUCCESS_MESSAGE,
+      registeredHandle: created.handle,
+      registeredEmail: created.email,
+      registeredAtelierName: created.atelierName,
+    };
   } catch (error) {
     if (error instanceof AuthServiceError) {
       return {
@@ -73,24 +67,45 @@ export async function loginAction(
   const callbackUrl = String(formData.get("callbackUrl") ?? "/dashboard");
 
   try {
-    await signIn("credentials", {
+    await authenticateUser({ identifier, password });
+
+    const signInResult = await signIn("credentials", {
       identifier,
       password,
-      redirectTo: callbackUrl,
+      redirect: false,
     });
-    return { ok: true };
-  } catch (error) {
-    if (error instanceof AuthError) {
+
+    if (
+      signInResult &&
+      typeof signInResult === "object" &&
+      "error" in signInResult &&
+      signInResult.error
+    ) {
       return {
         ok: false,
         message: "Email ou mot de passe incorrect.",
       };
     }
+
+    redirect(callbackUrl);
+  } catch (error) {
+    if (isNextNavigationError(error)) {
+      throw error;
+    }
     if (error instanceof AuthServiceError) {
+      if (error.code === "ACCOUNT_PENDING") {
+        return { ok: false, message: ACCOUNT_PENDING_MESSAGE };
+      }
       return {
         ok: false,
         message: error.message,
         fieldErrors: flattenFieldErrors(error.fieldErrors),
+      };
+    }
+    if (error instanceof AuthError) {
+      return {
+        ok: false,
+        message: "Email ou mot de passe incorrect.",
       };
     }
     return {
@@ -103,5 +118,3 @@ export async function loginAction(
 export async function signOutAction() {
   await signOut({ redirectTo: "/" });
 }
-
-export { initialState as authFormInitialState };

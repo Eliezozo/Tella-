@@ -74,6 +74,8 @@ async function main() {
         averageRating: tailor.rating,
         reviewsCount: tailor.reviewsCount,
         completedOrders: tailor.completedOrders,
+        isApproved: true,
+        isPublished: true,
       },
     });
 

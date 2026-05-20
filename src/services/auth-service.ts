@@ -8,13 +8,22 @@ import {
   type RegisterTailorInput,
 } from "@/lib/validations/auth";
 import { getAuthRepository } from "@/repositories/index";
-import type { AuthUser, RegisterTailorPayload, UserRole } from "@/types/auth";
+import type {
+  AuthUser,
+  RegisterTailorPayload,
+  RegisterTailorResult,
+  UserRole,
+} from "@/types/auth";
 
 export type AuthErrorCode =
   | "VALIDATION"
   | "EMAIL_EXISTS"
   | "INVALID_CREDENTIALS"
-  | "NO_PASSWORD";
+  | "NO_PASSWORD"
+  | "ACCOUNT_PENDING";
+
+export const ACCOUNT_PENDING_MESSAGE =
+  "Votre compte est en attente de validation par l'équipe Tella. Vous pourrez vous connecter une fois votre atelier approuvé.";
 
 export class AuthServiceError extends Error {
   constructor(
@@ -42,6 +51,7 @@ function toAuthUser(record: {
   role: string;
   tailorProfileId: string | null;
   handle: string | null;
+  isApproved: boolean;
 }): AuthUser {
   return {
     id: record.id,
@@ -54,16 +64,9 @@ function toAuthUser(record: {
   };
 }
 
-function parseSpecialties(raw: string): string[] {
-  return raw
-    .split(",")
-    .map((s) => s.trim())
-    .filter(Boolean);
-}
-
 export async function registerTailor(
   input: RegisterTailorInput,
-): Promise<AuthUser> {
+): Promise<RegisterTailorResult> {
   const parsed = registerTailorSchema.safeParse(input);
   if (!parsed.success) {
     throw new AuthServiceError(
@@ -88,14 +91,19 @@ export async function registerTailor(
   const handle = ensureUniqueHandle(baseHandle, handles);
   const passwordHash = await hashPassword(parsed.data.password);
 
+  const heroLabel =
+    parsed.data.heroLabel?.trim() ||
+    `Découvrez ${parsed.data.atelierName.trim()}`;
+
   const payload: RegisterTailorPayload = {
-    atelierName: parsed.data.atelierName,
+    atelierName: parsed.data.atelierName.trim(),
     city: parsed.data.city,
     whatsapp: parsed.data.whatsapp.trim(),
-    specialties: parseSpecialties(parsed.data.specialties),
-    description: parsed.data.description,
+    specialties: parsed.data.specialties,
+    description: parsed.data.description.trim(),
     email: parsed.data.email.toLowerCase(),
     password: parsed.data.password,
+    heroLabel,
   };
 
   const created = await repo.registerTailor({
@@ -105,13 +113,11 @@ export async function registerTailor(
   });
 
   return {
-    id: created.userId,
-    email: payload.email,
-    phone: payload.whatsapp,
-    name: payload.atelierName,
-    role: "TAILOR",
+    userId: created.userId,
     tailorProfileId: created.tailorProfileId,
     handle: created.handle,
+    email: payload.email,
+    atelierName: payload.atelierName,
   };
 }
 
@@ -143,6 +149,10 @@ export async function authenticateUser(
       "Email ou mot de passe incorrect.",
       "INVALID_CREDENTIALS",
     );
+  }
+
+  if (record.role === "TAILOR" && !record.isApproved) {
+    throw new AuthServiceError(ACCOUNT_PENDING_MESSAGE, "ACCOUNT_PENDING");
   }
 
   return toAuthUser(record);

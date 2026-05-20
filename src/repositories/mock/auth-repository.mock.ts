@@ -11,7 +11,22 @@ type MockAuthRecord = {
   role: "TAILOR" | "CLIENT" | "ADMIN";
   tailorProfileId: string | null;
   handle: string | null;
+  isApproved: boolean;
 };
+
+function toAuthRecord(user: MockAuthRecord) {
+  return {
+    id: user.id,
+    email: user.email,
+    phone: user.phone,
+    name: user.name,
+    passwordHash: user.passwordHash,
+    role: user.role,
+    tailorProfileId: user.tailorProfileId,
+    handle: user.handle,
+    isApproved: user.role !== "TAILOR" || user.isApproved,
+  };
+}
 
 /** Compte démo : ama@tella.tg / TellaDemo2026 — lié à @atelier-ama */
 const DEMO_PASSWORD_HASH =
@@ -27,6 +42,7 @@ const mockUsers: MockAuthRecord[] = [
     role: "TAILOR",
     tailorProfileId: "t1",
     handle: "@atelier-ama",
+    isApproved: true,
   },
 ];
 
@@ -49,7 +65,8 @@ function findUser(identifier: string) {
 
 export const mockAuthRepository: AuthRepository = {
   async findByIdentifier(identifier) {
-    return findUser(identifier);
+    const user = findUser(identifier);
+    return user ? toAuthRecord(user) : null;
   },
 
   async findByEmail(email) {
@@ -77,6 +94,7 @@ export const mockAuthRepository: AuthRepository = {
       role: "TAILOR",
       tailorProfileId,
       handle: payload.handle,
+      isApproved: false,
     });
 
     dynamicTailors.push({
@@ -91,7 +109,9 @@ export const mockAuthRepository: AuthRepository = {
       reviewsCount: 0,
       completedOrders: 0,
       responseRate: 0,
-      heroLabel: `Découvrez ${payload.atelierName}`,
+      heroLabel: payload.heroLabel ?? `Découvrez ${payload.atelierName}`,
+      isApproved: false,
+      isPublished: false,
     });
 
     return { userId, tailorProfileId, handle: payload.handle };

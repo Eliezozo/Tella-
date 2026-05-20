@@ -18,4 +18,13 @@ export type RegisterTailorPayload = {
   description: string;
   email: string;
   password: string;
+  heroLabel?: string;
+};
+
+export type RegisterTailorResult = {
+  userId: string;
+  tailorProfileId: string;
+  handle: string;
+  email: string;
+  atelierName: string;
 };

@@ -1,3 +1,6 @@
+import { redirect } from "next/navigation";
+
+import { auth } from "@/auth";
 import { AuthLayout } from "@/components/layout/auth-layout";
 import { LoginForm } from "@/components/auth/login-form";
 import { getDemoCredentialsHint } from "@/services/auth-service";
@@ -9,6 +12,11 @@ export default async function LoginPage({
 }) {
   const params = await searchParams;
   const callbackUrl = params.callbackUrl ?? "/dashboard";
+  const session = await auth();
+
+  if (session?.user) {
+    redirect(callbackUrl);
+  }
 
   return (
     <AuthLayout

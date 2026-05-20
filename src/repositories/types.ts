@@ -43,6 +43,7 @@ export interface AuthRepository {
     role: string;
     tailorProfileId: string | null;
     handle: string | null;
+    isApproved: boolean;
   } | null>;
   findByEmail(email: string): Promise<{ id: string } | null>;
   getAllHandles(): Promise<string[]>;
@@ -55,6 +56,7 @@ export interface AuthRepository {
     email: string;
     passwordHash: string;
     handle: string;
+    heroLabel?: string;
   }): Promise<{
     userId: string;
     tailorProfileId: string;

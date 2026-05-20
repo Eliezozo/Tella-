@@ -74,11 +74,13 @@ cp .env.example .env
 
 | Route | Rôle |
 |-------|------|
-| `/register` | Inscription atelier (email, WhatsApp, spécialités) |
+| `/register` | Inscription atelier en 3 étapes (atelier → contact → vitrine) |
 | `/login` | Connexion email ou téléphone + mot de passe |
 | `/dashboard/*` | Protégé par middleware (session requise) |
 
-**Mode mock** (défaut, sans base) : compte démo `ama@tella.tg` / `TellaDemo2026` → profil `@atelier-ama`.
+**Mode mock** (défaut, sans base) : compte démo **activé** `ama@tella.tg` / `TellaDemo2026` → profil `@atelier-ama`.
+
+**Validation admin (option B)** : les nouvelles inscriptions ne peuvent pas se connecter tant que `isApproved` est faux ; message affiché sur `/login`. Le profil public nécessite `isApproved` + `isPublished` (activés par l’admin).
 
 **Mode Prisma** : mêmes identifiants après `npm run prisma:seed` sur le premier atelier seedé.
 
