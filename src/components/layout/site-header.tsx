@@ -1,5 +1,7 @@
 import Link from "next/link";
 
+import { auth } from "@/auth";
+import { SignOutButton } from "@/components/auth/sign-out-button";
 import { SearchIcon } from "@/components/ui/search-icon";
 import { SiteLogo } from "@/components/layout/site-logo";
 import { MobileNav } from "@/components/layout/mobile-nav";
@@ -11,7 +13,11 @@ const links = [
   { href: "/pricing", label: "Tarifs" },
 ];
 
-export function SiteHeader() {
+export async function SiteHeader() {
+  const session = await auth();
+  const user = session?.user;
+  const isTailor = user?.role === "TAILOR";
+
   return (
     <header className="sticky top-0 z-30 border-b border-border bg-background/95 backdrop-blur-sm">
       <div className="container-width flex items-center justify-between gap-4 px-4 py-3.5 sm:px-6 lg:px-8">
@@ -35,15 +41,42 @@ export function SiteHeader() {
           </Link>
 
           <div className="hidden items-center gap-2 md:flex">
-            <Button href="/login" variant="ghost" className="min-h-9 px-4">
-              Connexion
-            </Button>
-            <Button href="/register" className="min-h-9 px-4">
-              Créer mon atelier
-            </Button>
+            {user ? (
+              <>
+                <span className="max-w-[140px] truncate text-sm text-muted">
+                  {user.name ?? user.email}
+                </span>
+                <Button href="/dashboard" variant="ghost" className="min-h-9 px-4">
+                  {isTailor ? "Mon atelier" : "Dashboard"}
+                </Button>
+                {isTailor && user.handle ? (
+                  <Button
+                    href={`/${user.handle.replace("@", "")}`}
+                    variant="ghost"
+                    className="min-h-9 px-4"
+                  >
+                    Profil public
+                  </Button>
+                ) : null}
+                <SignOutButton className="min-h-9 rounded-md px-4 text-sm font-semibold text-muted hover:text-primary" />
+              </>
+            ) : (
+              <>
+                <Button href="/login" variant="ghost" className="min-h-9 px-4">
+                  Connexion
+                </Button>
+                <Button href="/register" className="min-h-9 px-4">
+                  Créer mon atelier
+                </Button>
+              </>
+            )}
           </div>
 
-          <MobileNav />
+          <MobileNav
+            isAuthenticated={Boolean(user)}
+            userName={user?.name ?? user?.email ?? undefined}
+            handle={user?.handle ?? undefined}
+          />
         </div>
       </div>
     </header>

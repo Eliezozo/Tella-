@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { useState } from "react";
 
+import { SignOutButton } from "@/components/auth/sign-out-button";
 import { SearchIcon } from "@/components/ui/search-icon";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
@@ -13,7 +14,15 @@ const links = [
   { href: "/pricing", label: "Tarifs" },
 ];
 
-export function MobileNav() {
+export function MobileNav({
+  isAuthenticated = false,
+  userName,
+  handle,
+}: {
+  isAuthenticated?: boolean;
+  userName?: string;
+  handle?: string;
+}) {
   const [isOpen, setIsOpen] = useState(false);
 
   return (
@@ -63,12 +72,39 @@ export function MobileNav() {
           ))}
         </nav>
         <div className="mt-4 flex flex-col gap-2">
-          <Button href="/login" variant="ghost" className="w-full">
-            Connexion
-          </Button>
-          <Button href="/register" className="w-full">
-            Créer mon atelier
-          </Button>
+          {isAuthenticated ? (
+            <>
+              {userName ? (
+                <p className="px-3 text-xs text-muted">Connectée : {userName}</p>
+              ) : null}
+              <Link
+                href="/dashboard"
+                onClick={() => setIsOpen(false)}
+                className="inline-flex min-h-11 w-full items-center justify-center rounded-md px-5 py-2.5 text-sm font-semibold text-foreground hover:bg-primary-soft hover:text-primary"
+              >
+                Mon atelier
+              </Link>
+              {handle ? (
+                <Link
+                  href={`/${handle.replace("@", "")}`}
+                  onClick={() => setIsOpen(false)}
+                  className="inline-flex min-h-11 w-full items-center justify-center rounded-md px-5 py-2.5 text-sm font-semibold text-foreground hover:bg-primary-soft hover:text-primary"
+                >
+                  Profil public
+                </Link>
+              ) : null}
+              <SignOutButton className="w-full rounded-md border border-border px-4 py-2.5 text-sm font-semibold text-muted" />
+            </>
+          ) : (
+            <>
+              <Button href="/login" variant="ghost" className="w-full">
+                Connexion
+              </Button>
+              <Button href="/register" className="w-full">
+                Créer mon atelier
+              </Button>
+            </>
+          )}
         </div>
       </div>
     </div>

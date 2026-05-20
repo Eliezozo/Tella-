@@ -1,3 +1,5 @@
+import { hashSync } from "bcryptjs";
+
 import {
   buildCreationMetadata,
 } from "../src/lib/mappers/discovery-mappers";
@@ -8,6 +10,8 @@ import {
   tailorProfiles,
 } from "../src/lib/mock-data";
 import { PrismaClient, SubscriptionStatus, UserRole } from "@prisma/client";
+
+const DEMO_PASSWORD_HASH = hashSync("TellaDemo2026", 12);
 
 const prisma = new PrismaClient();
 
@@ -40,10 +44,16 @@ async function main() {
 
   const tailorIdMap = new Map<string, string>();
 
-  for (const tailor of tailorProfiles) {
+  for (const [index, tailor] of tailorProfiles.entries()) {
     const user = await prisma.user.create({
       data: {
         name: tailor.atelierName,
+        email:
+          index === 0
+            ? "ama@tella.tg"
+            : `${tailor.handle.replace("@", "")}@tella.tg`,
+        phone: tailor.whatsapp,
+        passwordHash: index === 0 ? DEMO_PASSWORD_HASH : undefined,
         role: UserRole.TAILOR,
       },
     });

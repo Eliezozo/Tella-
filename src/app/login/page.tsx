@@ -1,48 +1,22 @@
-import Link from "next/link";
-
 import { AuthLayout } from "@/components/layout/auth-layout";
-import { Button } from "@/components/ui/button";
+import { LoginForm } from "@/components/auth/login-form";
+import { getDemoCredentialsHint } from "@/services/auth-service";
 
-export default function LoginPage() {
+export default async function LoginPage({
+  searchParams,
+}: {
+  searchParams: Promise<{ callbackUrl?: string }>;
+}) {
+  const params = await searchParams;
+  const callbackUrl = params.callbackUrl ?? "/dashboard";
+
   return (
     <AuthLayout
       eyebrow="Connexion"
       title="Accéder à mon atelier"
       description="Connectez-vous pour gérer votre profil, vos collections et votre visibilité sur Tella."
     >
-      <div className="mt-8 space-y-4">
-        <label className="block">
-          <span className="text-xs font-semibold uppercase tracking-[0.14em] text-muted">
-            Email ou téléphone
-          </span>
-          <input
-            type="text"
-            placeholder="exemple@email.com"
-            disabled
-            className="mt-2 w-full rounded-md border border-border bg-background px-4 py-2.5 text-sm text-foreground"
-          />
-        </label>
-        <label className="block">
-          <span className="text-xs font-semibold uppercase tracking-[0.14em] text-muted">
-            Mot de passe
-          </span>
-          <input
-            type="password"
-            placeholder="••••••••"
-            disabled
-            className="mt-2 w-full rounded-md border border-border bg-background px-4 py-2.5 text-sm text-foreground"
-          />
-        </label>
-      </div>
-      <Button className="mt-8 w-full" href="/dashboard">
-        Se connecter (démo)
-      </Button>
-      <p className="mt-4 text-center text-sm text-muted">
-        Pas encore de compte ?{" "}
-        <Link href="/register" className="font-semibold text-primary hover:text-primary-strong">
-          Créer mon atelier
-        </Link>
-      </p>
+      <LoginForm callbackUrl={callbackUrl} demoHint={getDemoCredentialsHint()} />
     </AuthLayout>
   );
 }

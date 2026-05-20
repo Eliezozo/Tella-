@@ -1,5 +1,6 @@
 import { DashboardShell } from "@/components/layout/dashboard-shell";
 import { Badge } from "@/components/ui/badge";
+import { requireSession } from "@/lib/session";
 
 const subscriptions = [
   ["Atelier Ama", "Plan annuel", "actif", "30 juin 2026"],
@@ -14,9 +15,12 @@ const statusVariant = {
   expiré: "default" as const,
 };
 
-export default function DashboardOrdersPage() {
+export default async function DashboardOrdersPage() {
+  const session = await requireSession();
+
   return (
     <DashboardShell
+      session={session}
       title="Abonnements couturières"
       description="Suivi des abonnements actifs, relances et renouvellements hors plateforme."
     >

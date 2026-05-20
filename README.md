@@ -7,7 +7,8 @@ Objectifs du socle actuel :
 - landing premium mobile-first
 - pages publiques `Home`, `Explore`, `Search`, `Pricing`
 - profil public de couturière via une URL du type `/${"@atelier"}`
-- dashboard administrateur pour piloter couturières et abonnements
+- auth couturière (inscription, connexion, session JWT)
+- dashboard atelier / admin selon le rôle connecté
 - design system cohérent avec l’identité Tella
 - schéma Prisma prêt pour la gestion des ateliers, abonnements et demandes
 
@@ -18,6 +19,7 @@ Objectifs du socle actuel :
 - Tailwind CSS 4
 - Prisma + PostgreSQL
 - Zustand
+- NextAuth v5 (Auth.js) + bcryptjs + Zod
 
 ## Lancer le projet
 
@@ -63,9 +65,27 @@ npm run prisma:migrate
 npm run prisma:seed
 ```
 
+## Auth (couturière)
+
+```bash
+cp .env.example .env
+# Définir AUTH_SECRET (openssl rand -base64 32) et AUTH_URL
+```
+
+| Route | Rôle |
+|-------|------|
+| `/register` | Inscription atelier (email, WhatsApp, spécialités) |
+| `/login` | Connexion email ou téléphone + mot de passe |
+| `/dashboard/*` | Protégé par middleware (session requise) |
+
+**Mode mock** (défaut, sans base) : compte démo `ama@tella.tg` / `TellaDemo2026` → profil `@atelier-ama`.
+
+**Mode Prisma** : mêmes identifiants après `npm run prisma:seed` sur le premier atelier seedé.
+
+Couche : `auth-service` → `auth-repository` (mock ou prisma) → NextAuth Credentials.
+
 ## Prochaines phases métier
 
-1. Auth + inscription couturière (création profil réel).
-2. Admin : abonnements et statistiques depuis Prisma.
+1. Admin : abonnements et statistiques depuis Prisma.
 3. Favoris, suivi clics WhatsApp, upload médias.
 4. Formulaires React Hook Form + Zod.

@@ -1,8 +1,12 @@
 import { DashboardShell } from "@/components/layout/dashboard-shell";
+import { requireSession } from "@/lib/session";
 
-export default function DashboardSettingsPage() {
+export default async function DashboardSettingsPage() {
+  const session = await requireSession();
+
   return (
     <DashboardShell
+      session={session}
       title="Paramètres"
       description="Identité atelier, abonnements, disponibilité et préférences WhatsApp."
     >

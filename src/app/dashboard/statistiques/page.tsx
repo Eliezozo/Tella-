@@ -1,8 +1,12 @@
 import { DashboardShell } from "@/components/layout/dashboard-shell";
+import { requireSession } from "@/lib/session";
 
-export default function DashboardStatsPage() {
+export default async function DashboardStatsPage() {
+  const session = await requireSession();
+
   return (
     <DashboardShell
+      session={session}
       title="Statistiques"
       description="Indicateurs: vues profil, conversion WhatsApp, sources de trafic et performance des créations."
     >
