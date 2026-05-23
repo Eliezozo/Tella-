@@ -2,6 +2,7 @@ import Link from "next/link";
 
 import { OptimizedImage } from "@/components/ui/optimized-image";
 import { Badge } from "@/components/ui/badge";
+import { toTailorProfilePath } from "@/lib/handle";
 import type { TailorProfile } from "@/types";
 
 export function TailorCard({ tailor }: { tailor: TailorProfile }) {
@@ -47,7 +48,7 @@ export function TailorCard({ tailor }: { tailor: TailorProfile }) {
             <p>{tailor.responseRate}% réponse</p>
           </div>
           <Link
-            href={`/${tailor.handle}`}
+            href={toTailorProfilePath(tailor.handle)}
             className="rounded-md bg-primary px-4 py-2 text-xs font-semibold text-on-primary hover:bg-primary-strong"
           >
             Voir le profil

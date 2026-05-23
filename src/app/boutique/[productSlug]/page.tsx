@@ -6,6 +6,7 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { OptimizedImage } from "@/components/ui/optimized-image";
 import { categoryLabels } from "@/lib/constants/categories";
+import { toTailorProfilePath } from "@/lib/handle";
 import { buildWhatsappLink } from "@/hooks/build-whatsapp-link";
 import { getCreationDetailPage } from "@/services/creation-service";
 import { formatCurrency } from "@/lib/utils";
@@ -41,7 +42,7 @@ export default async function ProductDetailPage({
       <section className="section-padding">
         <div className="container-width">
           <div className="mb-4 flex flex-wrap items-center gap-2 text-xs text-muted">
-            <Link href={`/${tailor.handle}`} className="hover:text-primary">
+            <Link href={toTailorProfilePath(tailor.handle)} className="hover:text-primary">
               {tailor.atelierName}
             </Link>
             <span>/</span>
@@ -137,7 +138,7 @@ export default async function ProductDetailPage({
                 <Button href={whatsappHref} className="flex-1">
                   Contacter la couturière
                 </Button>
-                <Button href={`/${tailor.handle}`} variant="secondary" className="flex-1">
+                <Button href={toTailorProfilePath(tailor.handle)} variant="secondary" className="flex-1">
                   Voir l&apos;atelier
                 </Button>
               </div>

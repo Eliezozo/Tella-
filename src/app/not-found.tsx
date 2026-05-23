@@ -1,6 +1,4 @@
-import Link from "next/link";
-
-import { Button } from "@/components/ui/button";
+import { BackButton } from "@/components/ui/back-button";
 
 export default function NotFound() {
   return (
@@ -11,9 +9,9 @@ export default function NotFound() {
         <p className="mt-3 text-sm leading-6 text-muted">
           Le lien demandé n&apos;existe pas ou le profil atelier n&apos;est pas disponible.
         </p>
-        <Button href="/" className="mt-6">
-          Revenir à l&apos;accueil
-        </Button>
+        <div className="mt-6 flex justify-center">
+          <BackButton />
+        </div>
       </div>
     </div>
   );

@@ -4,6 +4,7 @@ import Link from "next/link";
 import { useState } from "react";
 
 import { SignOutButton } from "@/components/auth/sign-out-button";
+import { toTailorProfilePath } from "@/lib/handle";
 import { SearchIcon } from "@/components/ui/search-icon";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
@@ -86,7 +87,7 @@ export function MobileNav({
               </Link>
               {handle ? (
                 <Link
-                  href={`/${handle.replace("@", "")}`}
+                  href={toTailorProfilePath(handle)}
                   onClick={() => setIsOpen(false)}
                   className="inline-flex min-h-11 w-full items-center justify-center rounded-md px-5 py-2.5 text-sm font-semibold text-foreground hover:bg-primary-soft hover:text-primary"
                 >

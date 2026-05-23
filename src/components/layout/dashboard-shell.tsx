@@ -3,6 +3,8 @@ import type { ReactNode } from "react";
 
 import type { Session } from "next-auth";
 
+import { toTailorProfilePath } from "@/lib/handle";
+
 type DashboardShellProps = {
   title: string;
   description: string;
@@ -18,16 +20,14 @@ export function DashboardShell({
 }: DashboardShellProps) {
   const user = session.user;
   const isTailor = user.role === "TAILOR";
-  const handleSlug = user.handle?.replace("@", "");
-
   const navItems = isTailor
     ? [
         { href: "/dashboard", label: "Vue d'ensemble" },
         { href: "/dashboard/creations", label: "Mes créations" },
         { href: "/dashboard/statistiques", label: "Audience" },
         { href: "/dashboard/parametres", label: "Paramètres" },
-        ...(handleSlug
-          ? [{ href: `/${handleSlug}`, label: "Profil public" }]
+        ...(user.handle
+          ? [{ href: toTailorProfilePath(user.handle), label: "Profil public" }]
           : []),
       ]
     : [
@@ -66,12 +66,6 @@ export function DashboardShell({
               </Link>
             ))}
           </nav>
-          <Link
-            href="/"
-            className="mt-5 block rounded-md border border-border px-3 py-2 text-center text-xs font-medium text-muted hover:text-primary"
-          >
-            ← Retour au site
-          </Link>
         </aside>
 
         <main className="space-y-4">

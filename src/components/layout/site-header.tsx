@@ -1,6 +1,7 @@
 import Link from "next/link";
 
 import { auth } from "@/auth";
+import { toTailorProfilePath } from "@/lib/handle";
 import { SignOutButton } from "@/components/auth/sign-out-button";
 import { SearchIcon } from "@/components/ui/search-icon";
 import { SiteLogo } from "@/components/layout/site-logo";
@@ -51,7 +52,7 @@ export async function SiteHeader() {
                 </Button>
                 {isTailor && user.handle ? (
                   <Button
-                    href={`/${user.handle.replace("@", "")}`}
+                    href={toTailorProfilePath(user.handle)}
                     variant="ghost"
                     className="min-h-9 px-4"
                   >

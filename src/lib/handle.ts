@@ -22,3 +22,13 @@ export function ensureUniqueHandle(baseHandle: string, existing: string[]): stri
   }
   return `@${stem}-${index}`;
 }
+
+/** Normalise un handle (@atelier-ama) pour comparaison et routes. */
+export function normalizeHandle(handle: string): string {
+  return handle.startsWith("@") ? handle : `@${handle}`;
+}
+
+/** Chemin public du profil atelier (ex. /@atelier-ama). */
+export function toTailorProfilePath(handle: string): string {
+  return `/${normalizeHandle(handle)}`;
+}

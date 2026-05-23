@@ -7,6 +7,7 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { OptimizedImage } from "@/components/ui/optimized-image";
 import { buildWhatsappLink } from "@/hooks/build-whatsapp-link";
+import { normalizeHandle } from "@/lib/handle";
 import { getTailorProfilePage } from "@/services/tailor-service";
 
 export default async function TailorProfilePage({
@@ -14,11 +15,8 @@ export default async function TailorProfilePage({
 }: {
   params: Promise<{ handle: string }>;
 }) {
-  const { handle } = await params;
-
-  if (!handle.startsWith("@")) {
-    notFound();
-  }
+  const { handle: rawHandle } = await params;
+  const handle = normalizeHandle(decodeURIComponent(rawHandle));
 
   const data = await getTailorProfilePage(handle);
 

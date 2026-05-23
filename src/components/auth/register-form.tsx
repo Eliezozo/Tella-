@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { useActionState, useEffect, useMemo, useState } from "react";
+import { useActionState, useMemo, useState } from "react";
 
 import { registerTailorAction } from "@/actions/auth-actions";
 import { RegisterSuccess } from "@/components/auth/register-success";
@@ -54,12 +54,12 @@ export function RegisterForm() {
     [atelierName],
   );
 
-  useEffect(() => {
-    if (!state.fieldErrors) return;
+  const displayStep = useMemo(() => {
+    if (!state.fieldErrors) return step;
     const firstField = Object.keys(state.fieldErrors)[0];
     const targetStep = firstField ? FIELD_STEP[firstField] : undefined;
-    if (targetStep) setStep(targetStep);
-  }, [state.fieldErrors]);
+    return targetStep ?? step;
+  }, [state.fieldErrors, step]);
 
   if (state.ok && state.pendingApproval && state.registeredHandle) {
     return (
@@ -88,9 +88,9 @@ export function RegisterForm() {
               <div
                 className={cn(
                   "rounded-md px-2 py-2 text-center text-xs font-semibold uppercase tracking-wide",
-                  step === item.id
+                  displayStep === item.id
                     ? "bg-primary text-on-primary"
-                    : step > item.id
+                    : displayStep > item.id
                       ? "bg-primary-soft text-primary"
                       : "bg-surface text-muted",
                 )}
@@ -111,7 +111,7 @@ export function RegisterForm() {
         </p>
       ) : null}
 
-      <div className={cn("space-y-4", step !== 1 && "hidden")} aria-hidden={step !== 1}>
+      <div className={cn("space-y-4", displayStep !== 1 && "hidden")} aria-hidden={displayStep !== 1}>
           <p className="text-sm text-muted">
             Étape 1 — Présentez votre atelier. Votre identifiant public sera généré
             automatiquement.
@@ -160,7 +160,7 @@ export function RegisterForm() {
           />
       </div>
 
-      <div className={cn("space-y-4", step !== 2 && "hidden")} aria-hidden={step !== 2}>
+      <div className={cn("space-y-4", displayStep !== 2 && "hidden")} aria-hidden={displayStep !== 2}>
           <p className="text-sm text-muted">
             Étape 2 — Coordonnées et accès. Ces informations servent à la connexion et au
             contact WhatsApp.
@@ -194,7 +194,7 @@ export function RegisterForm() {
           />
       </div>
 
-      <div className={cn("space-y-4", step !== 3 && "hidden")} aria-hidden={step !== 3}>
+      <div className={cn("space-y-4", displayStep !== 3 && "hidden")} aria-hidden={displayStep !== 3}>
           <p className="text-sm text-muted">
             Étape 3 — Décrivez votre savoir-faire. Votre profil restera privé jusqu&apos;à
             validation admin.
@@ -258,7 +258,7 @@ export function RegisterForm() {
       </div>
 
       <div className="mt-8 flex flex-col gap-3 sm:flex-row">
-        {step > 1 ? (
+        {displayStep > 1 ? (
           <button
             type="button"
             onClick={goBack}
@@ -268,7 +268,7 @@ export function RegisterForm() {
             Retour
           </button>
         ) : null}
-        {step < 3 ? (
+        {displayStep < 3 ? (
           <button
             type="button"
             onClick={goNext}
