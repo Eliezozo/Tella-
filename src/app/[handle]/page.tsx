@@ -7,6 +7,8 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { OptimizedImage } from "@/components/ui/optimized-image";
 import { buildWhatsappLink } from "@/hooks/build-whatsapp-link";
+import { TailorOwnerBanner } from "@/components/dashboard/tailor-owner-banner";
+import { auth } from "@/auth";
 import { normalizeHandle } from "@/lib/handle";
 import { getTailorProfilePage } from "@/services/tailor-service";
 
@@ -25,6 +27,11 @@ export default async function TailorProfilePage({
   }
 
   const { profile, portfolio, reviews: profileReviews } = data;
+  const session = await auth();
+  const isOwner =
+    session?.user?.role === "TAILOR" &&
+    session.user.tailorProfileId === profile.id;
+
   const whatsappHref = buildWhatsappLink(
     profile.whatsapp,
     "Bonjour, je vous contacte depuis Tella concernant un modèle.",
@@ -32,6 +39,7 @@ export default async function TailorProfilePage({
 
   return (
     <PageShell>
+      {isOwner ? <TailorOwnerBanner atelierName={profile.atelierName} /> : null}
       <section className="section-padding">
         <div className="container-width grid gap-6 lg:grid-cols-[1fr_280px]">
           <div className="surface-card overflow-hidden">

@@ -10,6 +10,7 @@ type DashboardShellProps = {
   description: string;
   children: ReactNode;
   session: Session;
+  workspaceLabel?: string;
 };
 
 export function DashboardShell({
@@ -17,6 +18,7 @@ export function DashboardShell({
   description,
   children,
   session,
+  workspaceLabel,
 }: DashboardShellProps) {
   const user = session.user;
   const isTailor = user.role === "TAILOR";
@@ -70,7 +72,7 @@ export function DashboardShell({
 
         <main className="space-y-4">
           <div className="surface-card p-5 sm:p-6">
-            <p className="eyebrow">Dashboard</p>
+            <p className="eyebrow">{workspaceLabel ?? (isTailor ? "Mon atelier" : "Dashboard")}</p>
             <h1 className="heading-display heading-h2 mt-2">{title}</h1>
             <p className="mt-2 max-w-2xl text-sm leading-6 text-muted">{description}</p>
           </div>

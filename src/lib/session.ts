@@ -9,3 +9,15 @@ export async function requireSession() {
   }
   return session;
 }
+
+/** Session couturière avec profil atelier lié — pour l'espace /dashboard. */
+export async function requireTailorSession() {
+  const session = await requireSession();
+  const { user } = session;
+
+  if (user.role !== "TAILOR" || !user.tailorProfileId) {
+    redirect("/dashboard");
+  }
+
+  return session;
+}

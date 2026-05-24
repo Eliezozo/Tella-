@@ -22,7 +22,7 @@ export async function SiteHeader() {
   return (
     <header className="sticky top-0 z-30 border-b border-border bg-background/95 backdrop-blur-sm">
       <div className="container-width flex items-center justify-between gap-4 px-4 py-3.5 sm:px-6 lg:px-8">
-        <SiteLogo />
+        <SiteLogo href={isTailor ? "/dashboard" : "/"} subtitle={isTailor ? "Espace atelier" : "Marketplace couture"} />
 
         <nav className="hidden items-center gap-6 text-sm font-medium text-foreground md:flex">
           {links.map((link) => (

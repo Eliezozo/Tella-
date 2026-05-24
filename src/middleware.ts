@@ -17,8 +17,12 @@ export default auth((req) => {
   ) {
     return NextResponse.redirect(new URL("/dashboard", req.nextUrl.origin));
   }
+
+  if (req.nextUrl.pathname === "/" && req.auth?.user?.role === "TAILOR") {
+    return NextResponse.redirect(new URL("/dashboard", req.nextUrl.origin));
+  }
 });
 
 export const config = {
-  matcher: ["/dashboard/:path*", "/login", "/register"],
+  matcher: ["/", "/dashboard/:path*", "/login", "/register"],
 };

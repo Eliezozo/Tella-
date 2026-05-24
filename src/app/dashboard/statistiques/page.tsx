@@ -1,14 +1,21 @@
 import { DashboardShell } from "@/components/layout/dashboard-shell";
-import { requireSession } from "@/lib/session";
+import { requireSession, requireTailorSession } from "@/lib/session";
 
 export default async function DashboardStatsPage() {
   const session = await requireSession();
+  const isTailor = session.user.role === "TAILOR" && session.user.tailorProfileId;
+  const tailorSession = isTailor ? await requireTailorSession() : session;
 
   return (
     <DashboardShell
-      session={session}
+      session={tailorSession}
+      workspaceLabel={isTailor ? "Mon atelier" : undefined}
       title="Statistiques"
-      description="Indicateurs: vues profil, conversion WhatsApp, sources de trafic et performance des créations."
+      description={
+        isTailor
+          ? "Vues de votre vitrine, clics WhatsApp et performance de vos créations."
+          : "Indicateurs: vues profil, conversion WhatsApp, sources de trafic et performance des créations."
+      }
     >
       <div className="grid gap-4 lg:grid-cols-2">
         <div className="surface-card p-5">

@@ -4,6 +4,10 @@ export async function getCreationBySlug(slug: string) {
   return getCreationRepository().findBySlug(slug);
 }
 
+export async function getCreationsByTailorId(tailorId: string) {
+  return getCreationRepository().findByTailorId(tailorId);
+}
+
 export async function getCreationDetailPage(slug: string) {
   const product = await getCreationBySlug(slug);
   if (!product) {
