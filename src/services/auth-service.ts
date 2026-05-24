@@ -160,7 +160,7 @@ export async function authenticateUser(
 
 export function getDemoCredentialsHint(): string | null {
   if (getDataSourceMode() === "prisma") {
-    return null;
+    return "Couturière : ama@tella.tg / TellaDemo2026 — Admin : admin@tella.tg / TellaDemo2026";
   }
   return "Compte démo : ama@tella.tg / TellaDemo2026";
 }

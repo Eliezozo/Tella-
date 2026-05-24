@@ -113,6 +113,15 @@ async function main() {
     });
   }
 
+  await prisma.user.create({
+    data: {
+      name: "Admin Tella",
+      email: "admin@tella.tg",
+      passwordHash: DEMO_PASSWORD_HASH,
+      role: UserRole.ADMIN,
+    },
+  });
+
   const client = await prisma.user.create({
     data: { name: "Cliente Tella", role: UserRole.CLIENT },
   });

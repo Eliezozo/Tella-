@@ -34,6 +34,17 @@ const DEMO_PASSWORD_HASH =
 
 const mockUsers: MockAuthRecord[] = [
   {
+    id: "u-admin",
+    email: "admin@tella.tg",
+    phone: null,
+    name: "Admin Tella",
+    passwordHash: DEMO_PASSWORD_HASH,
+    role: "ADMIN",
+    tailorProfileId: null,
+    handle: null,
+    isApproved: true,
+  },
+  {
     id: "u-demo-ama",
     email: "ama@tella.tg",
     phone: "+22890000001",
@@ -120,4 +131,40 @@ export const mockAuthRepository: AuthRepository = {
 
 export function getDynamicTailors() {
   return dynamicTailors;
+}
+
+export function listPendingRegistrationsFromMock() {
+  return dynamicTailors
+    .filter((t) => !t.isApproved)
+    .map((t) => {
+      const user = mockUsers.find((u) => u.tailorProfileId === t.id);
+      return {
+        id: t.id,
+        handle: t.handle,
+        atelierName: t.atelierName,
+        city: t.city,
+        email: user?.email ?? null,
+        whatsapp: t.whatsapp,
+        createdAt: new Date(),
+        isApproved: t.isApproved ?? false,
+        isPublished: t.isPublished ?? false,
+      };
+    });
+}
+
+export function setTailorApprovalInMock(
+  tailorProfileId: string,
+  options: { isApproved: boolean; isPublished?: boolean },
+) {
+  const user = mockUsers.find((u) => u.tailorProfileId === tailorProfileId);
+  if (user) {
+    user.isApproved = options.isApproved;
+  }
+  const tailor = dynamicTailors.find((t) => t.id === tailorProfileId);
+  if (tailor) {
+    tailor.isApproved = options.isApproved;
+    if (options.isPublished !== undefined) {
+      tailor.isPublished = options.isPublished;
+    }
+  }
 }

@@ -34,6 +34,7 @@ export function DashboardShell({
       ]
     : [
         { href: "/dashboard", label: "Vue admin" },
+        { href: "/dashboard/demandes", label: "Demandes ateliers" },
         { href: "/dashboard/creations", label: "Collections" },
         { href: "/dashboard/commandes", label: "Abonnements" },
         { href: "/dashboard/statistiques", label: "Audience" },

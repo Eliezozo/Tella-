@@ -10,6 +10,7 @@ export function FormField({
   error,
   className,
   children,
+  required = true,
 }: {
   label: string;
   name: string;
@@ -18,6 +19,7 @@ export function FormField({
   error?: string;
   className?: string;
   children?: ReactNode;
+  required?: boolean;
 }) {
   return (
     <label className={cn("block", className)}>
@@ -29,7 +31,7 @@ export function FormField({
           name={name}
           type={type}
           placeholder={placeholder}
-          required
+          required={required}
           className="mt-2 w-full rounded-md border border-border bg-background px-4 py-2.5 text-sm text-foreground outline-none focus:border-primary"
         />
       )}
