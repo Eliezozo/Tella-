@@ -5,6 +5,7 @@ import { useActionState, useRef } from "react";
 
 import { loginAction } from "@/actions/auth-actions";
 import { authFormInitialState } from "@/lib/auth-form-state";
+import { FormAlert } from "@/components/auth/form-alert";
 import { FormField } from "@/components/auth/form-field";
 
 function fieldError(
@@ -48,12 +49,13 @@ export function LoginForm({
       ) : null}
 
       {state.message && !state.ok ? (
-        <p
-          role="alert"
-          className="mb-4 rounded-md border border-primary/30 bg-primary-soft px-4 py-3 text-sm text-primary"
+        <FormAlert
+          variant={
+            /attente|validation|approbation/i.test(state.message) ? "info" : "error"
+          }
         >
           {state.message}
-        </p>
+        </FormAlert>
       ) : null}
 
       <div className="space-y-4">

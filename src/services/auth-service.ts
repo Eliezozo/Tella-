@@ -1,6 +1,7 @@
 import { getDataSourceMode } from "@/lib/data-source";
 import { ensureUniqueHandle, slugifyHandle } from "@/lib/handle";
 import { hashPassword, verifyPassword } from "@/lib/password";
+import { normalizePhone } from "@/lib/phone";
 import {
   loginSchema,
   registerTailorSchema,
@@ -98,10 +99,10 @@ export async function registerTailor(
   const payload: RegisterTailorPayload = {
     atelierName: parsed.data.atelierName.trim(),
     city: parsed.data.city,
-    whatsapp: parsed.data.whatsapp.trim(),
+    whatsapp: normalizePhone(parsed.data.whatsapp),
     specialties: parsed.data.specialties,
     description: parsed.data.description.trim(),
-    email: parsed.data.email.toLowerCase(),
+    email: parsed.data.email.toLowerCase().trim(),
     password: parsed.data.password,
     heroLabel,
   };

@@ -31,7 +31,13 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
             tailorProfileId: user.tailorProfileId,
             handle: user.handle,
           };
-        } catch {
+        } catch (error) {
+          // On log côté serveur pour diagnostic Vercel sans exposer le détail au client.
+          if (error instanceof Error) {
+            console.error("[auth.authorize] échec authentification:", error.message);
+          } else {
+            console.error("[auth.authorize] échec authentification inconnu:", error);
+          }
           return null;
         }
       },

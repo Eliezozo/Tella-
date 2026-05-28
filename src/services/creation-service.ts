@@ -1,11 +1,20 @@
 import { getCreationRepository, getTailorRepository } from "@/repositories";
+import { mockCreationRepository } from "@/repositories/mock/creation-repository.mock";
+import { mockTailorRepository } from "@/repositories/mock/tailor-repository.mock";
+import { withPrismaFallback } from "@/lib/with-prisma-fallback";
 
 export async function getCreationBySlug(slug: string) {
-  return getCreationRepository().findBySlug(slug);
+  return withPrismaFallback(
+    () => getCreationRepository().findBySlug(slug),
+    () => mockCreationRepository.findBySlug(slug),
+  );
 }
 
 export async function getCreationsByTailorId(tailorId: string) {
-  return getCreationRepository().findByTailorId(tailorId);
+  return withPrismaFallback(
+    () => getCreationRepository().findByTailorId(tailorId),
+    () => mockCreationRepository.findByTailorId(tailorId),
+  );
 }
 
 export async function getCreationDetailPage(slug: string) {
@@ -14,7 +23,11 @@ export async function getCreationDetailPage(slug: string) {
     return null;
   }
 
-  const tailor = await getTailorRepository().findById(product.tailorId);
+  const tailor = await withPrismaFallback(
+    () => getTailorRepository().findById(product.tailorId),
+    () => mockTailorRepository.findById(product.tailorId),
+  );
+
   if (!tailor) {
     return null;
   }

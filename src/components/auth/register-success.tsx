@@ -13,14 +13,15 @@ export function RegisterSuccess({
     <div className="mt-8 space-y-6">
       <div
         role="status"
-        className="rounded-md border border-secondary/40 bg-surface px-5 py-5"
+        className="rounded-md border border-success/40 bg-success/10 px-5 py-5"
       >
-        <p className="text-sm font-semibold text-foreground">
-          Demande enregistrée pour {atelierName}
+        <p className="text-sm font-semibold text-success">
+          ✓ Demande enregistrée pour {atelierName}
         </p>
-        <p className="mt-3 text-sm leading-6 text-muted">
-          Votre compte sera activé après validation par l&apos;équipe Tella. Vous
-          recevrez l&apos;accès à votre espace pro une fois l&apos;atelier approuvé.
+        <p className="mt-3 text-sm leading-6 text-foreground">
+          Notre équipe a été notifiée et va vérifier votre inscription sous 48 h.
+          Vous pourrez vous connecter à votre espace atelier une fois la validation
+          confirmée.
         </p>
       </div>
 

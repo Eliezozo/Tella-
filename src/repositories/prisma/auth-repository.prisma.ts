@@ -1,6 +1,7 @@
 import { UserRole } from "@prisma/client";
 
 import { prisma } from "@/lib/prisma";
+import { normalizePhone } from "@/lib/phone";
 import type { AuthRepository } from "@/repositories/types";
 
 function normalizeIdentifier(value: string) {
@@ -10,11 +11,13 @@ function normalizeIdentifier(value: string) {
 export const prismaAuthRepository: AuthRepository = {
   async findByIdentifier(identifier) {
     const trimmed = normalizeIdentifier(identifier);
+    const normalizedPhone = normalizePhone(trimmed);
     const row = await prisma.user.findFirst({
       where: {
         OR: [
           { email: { equals: trimmed, mode: "insensitive" } },
           { phone: trimmed },
+          { phone: normalizedPhone },
         ],
       },
       include: { tailorProfile: true },

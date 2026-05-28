@@ -18,6 +18,8 @@
   --on-secondary-dark: #fefefc;
   --success: #2d6a4f;
   --warning: #bc6c25;
+  --danger: #b91c1c;
+  --info: #1e6091;
   --radius: 6px;
   --font-size-h1: 4rem;
   --font-size-h2: 2.8rem;
@@ -41,6 +43,8 @@
   --color-on-secondary-dark: var(--on-secondary-dark);
   --color-success: var(--success);
   --color-warning: var(--warning);
+  --color-danger: var(--danger);
+  --color-info: var(--info);
   --font-sans: var(--font-body);
   --font-display: var(--font-heading);
   --radius-md: var(--radius);
