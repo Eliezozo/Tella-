@@ -7,6 +7,7 @@ import { loginAction } from "@/actions/auth-actions";
 import { authFormInitialState } from "@/lib/auth-form-state";
 import { FormAlert } from "@/components/auth/form-alert";
 import { FormField } from "@/components/auth/form-field";
+import { PasswordInput } from "@/components/ui/password-input";
 
 function fieldError(
   fieldErrors: Record<string, string[]> | undefined,
@@ -54,10 +55,15 @@ export function LoginForm({
         <FormField
           label="Mot de passe"
           name="password"
-          type="password"
-          placeholder="••••••••"
           error={fieldError(state.fieldErrors, "password")}
-        />
+          required={false}
+        >
+          <PasswordInput
+            name="password"
+            placeholder="••••••••"
+            autoComplete="current-password"
+          />
+        </FormField>
       </div>
 
       <button

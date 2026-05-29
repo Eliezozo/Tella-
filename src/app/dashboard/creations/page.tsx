@@ -8,9 +8,15 @@ import { getCreationsByTailorId } from "@/services/creation-service";
 import { getAllCreations } from "@/services/discovery-service";
 import { getTailorById } from "@/services/tailor-service";
 
-export default async function DashboardCreationsPage() {
+export default async function DashboardCreationsPage({
+  searchParams,
+}: {
+  searchParams: Promise<{ created?: string }>;
+}) {
   const session = await requireSession();
   const { user } = session;
+  const params = await searchParams;
+  const justCreated = params.created === "1";
 
   if (user.role === "TAILOR" && user.tailorProfileId) {
     const tailorSession = await requireTailorSession();
@@ -24,13 +30,11 @@ export default async function DashboardCreationsPage() {
         title="Mes créations"
         description="Catalogue affiché sur votre vitrine publique. Ajoutez des pièces pour enrichir votre collection."
       >
-        <div className="surface-card border border-primary/15 bg-primary-soft/40 p-4 text-sm text-foreground">
-          <p className="font-semibold">Publication de collection</p>
-          <p className="mt-1 text-muted">
-            L&apos;ajout et la modification seront enregistrés en base prochainement. En attendant,
-            vos créations mock sont visibles sur la vitrine.
-          </p>
-        </div>
+        {justCreated ? (
+          <div className="mb-6 rounded-md border border-success/40 bg-success/10 px-4 py-3 text-sm text-success">
+            Création publiée avec succès. Elle est visible sur votre vitrine.
+          </div>
+        ) : null}
 
         <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-3">
           <AddCreationCard />
@@ -45,7 +49,7 @@ export default async function DashboardCreationsPage() {
                   Vitrine →
                 </Link>
                 <span className="text-xs text-muted">·</span>
-                <span className="text-xs text-muted">Modifier (bientôt)</span>
+                <span className="text-xs text-muted">{creation.turnaround}</span>
               </div>
             </div>
           ))}

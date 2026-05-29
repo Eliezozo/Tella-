@@ -3,7 +3,11 @@ import {
   parseCreationMetadata,
 } from "@/lib/mappers/discovery-mappers";
 import { prisma } from "@/lib/prisma";
-import type { CreationRepository, CreationSearchFilters } from "@/repositories/types";
+import type {
+  CreateCreationPayload,
+  CreationRepository,
+  CreationSearchFilters,
+} from "@/repositories/types";
 import type { CategoryKey, Creation } from "@/types";
 
 function mapPrismaPost(record: {
@@ -77,6 +81,52 @@ export const prismaCreationRepository: CreationRepository = {
       orderBy: { createdAt: "desc" },
     });
     return rows.map(mapPrismaPost);
+  },
+
+  async findByTailorIdForOwner(tailorId) {
+    const rows = await prisma.post.findMany({
+      where: { tailorProfileId: tailorId },
+      include: { category: true },
+      orderBy: { createdAt: "desc" },
+    });
+    return rows.map(mapPrismaPost);
+  },
+
+  async getSlugsForTailor(tailorId) {
+    const rows = await prisma.post.findMany({
+      where: { tailorProfileId: tailorId },
+      select: { slug: true },
+    });
+    return rows.map((row) => row.slug);
+  },
+
+  async create(payload: CreateCreationPayload) {
+    const category = await prisma.category.findUnique({
+      where: { slug: payload.category },
+    });
+
+    const row = await prisma.post.create({
+      data: {
+        slug: payload.slug,
+        tailorProfileId: payload.tailorProfileId,
+        categoryId: category?.id,
+        title: payload.title,
+        description: payload.description,
+        mediaUrl: payload.mediaUrl,
+        mediaType: "image",
+        priceFrom: payload.priceFrom,
+        turnaroundLabel: payload.turnaroundLabel,
+        isPublished: true,
+        metadata: {
+          imageClassName: "from-surface-strong to-surface",
+          availableSizes: payload.availableSizes,
+          details: payload.details,
+        },
+      },
+      include: { category: true },
+    });
+
+    return mapPrismaPost(row);
   },
 
   async search(filters) {

@@ -7,6 +7,7 @@ import { registerTailorAction } from "@/actions/auth-actions";
 import { RegisterSuccess } from "@/components/auth/register-success";
 import { FormAlert } from "@/components/auth/form-alert";
 import { FormField } from "@/components/auth/form-field";
+import { PasswordInput } from "@/components/ui/password-input";
 import { categoryLabels } from "@/lib/constants/categories";
 import { togoCities } from "@/lib/constants/cities";
 import { authFormInitialState } from "@/lib/auth-form-state";
@@ -332,41 +333,37 @@ export function RegisterForm() {
           <FormField
             label="Mot de passe"
             name="password"
-            type="password"
-            placeholder="8 caractères minimum"
             error={fieldError(mergedErrors, "password")}
             required={false}
           >
-            <input
+            <PasswordInput
               name="password"
-              type="password"
               value={draft.password}
               onChange={(event) =>
                 setDraft((current) =>
                   mergeRegisterDraft(current, { password: event.target.value }),
                 )
               }
-              className={inputClassName}
+              placeholder="8 caractères minimum"
+              autoComplete="new-password"
             />
           </FormField>
           <FormField
             label="Confirmer le mot de passe"
             name="passwordConfirm"
-            type="password"
-            placeholder="Répétez le mot de passe"
             error={fieldError(mergedErrors, "passwordConfirm")}
             required={false}
           >
-            <input
+            <PasswordInput
               name="passwordConfirm"
-              type="password"
               value={draft.passwordConfirm}
               onChange={(event) =>
                 setDraft((current) =>
                   mergeRegisterDraft(current, { passwordConfirm: event.target.value }),
                 )
               }
-              className={inputClassName}
+              placeholder="Répétez le mot de passe"
+              autoComplete="new-password"
             />
           </FormField>
         </div>

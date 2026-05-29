@@ -20,11 +20,27 @@ export interface TailorRepository {
   getCities(): Promise<string[]>;
 }
 
+export type CreateCreationPayload = {
+  tailorProfileId: string;
+  slug: string;
+  title: string;
+  description: string;
+  category: CategoryKey;
+  mediaUrl: string;
+  priceFrom?: number;
+  turnaroundLabel: string;
+  availableSizes: string[];
+  details: string[];
+};
+
 export interface CreationRepository {
   findAll(): Promise<Creation[]>;
   findRecent(limit: number): Promise<Creation[]>;
   findBySlug(slug: string): Promise<Creation | null>;
   findByTailorId(tailorId: string): Promise<Creation[]>;
+  findByTailorIdForOwner(tailorId: string): Promise<Creation[]>;
+  getSlugsForTailor(tailorId: string): Promise<string[]>;
+  create(payload: CreateCreationPayload): Promise<Creation>;
   search(filters: CreationSearchFilters): Promise<Creation[]>;
 }
 

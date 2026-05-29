@@ -1,11 +1,22 @@
 import { creations, tailorProfiles } from "@/lib/mock-data";
-import type { CreationRepository, CreationSearchFilters } from "@/repositories/types";
+import { slugifyText } from "@/lib/slug";
+import type {
+  CreateCreationPayload,
+  CreationRepository,
+  CreationSearchFilters,
+} from "@/repositories/types";
 import type { Creation } from "@/types";
+
+const dynamicCreations: Creation[] = [];
+
+function allCreations(): Creation[] {
+  return [...creations, ...dynamicCreations];
+}
 
 function filterCreations(filters: CreationSearchFilters): Creation[] {
   const { query, category } = filters;
 
-  return creations.filter((creation) => {
+  return allCreations().filter((creation) => {
     if (category && creation.category !== category) {
       return false;
     }
@@ -26,19 +37,49 @@ function filterCreations(filters: CreationSearchFilters): Creation[] {
 
 export const mockCreationRepository: CreationRepository = {
   async findAll() {
-    return creations;
+    return allCreations();
   },
 
   async findRecent(limit) {
-    return creations.slice(0, limit);
+    return allCreations().slice(0, limit);
   },
 
   async findBySlug(slug) {
-    return creations.find((c) => c.slug === slug) ?? null;
+    return allCreations().find((c) => c.slug === slug) ?? null;
   },
 
   async findByTailorId(tailorId) {
-    return creations.filter((c) => c.tailorId === tailorId);
+    return allCreations().filter((c) => c.tailorId === tailorId);
+  },
+
+  async findByTailorIdForOwner(tailorId) {
+    return this.findByTailorId(tailorId);
+  },
+
+  async getSlugsForTailor(tailorId) {
+    return allCreations()
+      .filter((c) => c.tailorId === tailorId)
+      .map((c) => c.slug);
+  },
+
+  async create(payload: CreateCreationPayload) {
+    const creation: Creation = {
+      id: `c-${Date.now()}`,
+      tailorId: payload.tailorProfileId,
+      title: payload.title,
+      category: payload.category,
+      slug: payload.slug || slugifyText(payload.title),
+      priceFrom: payload.priceFrom,
+      turnaround: payload.turnaroundLabel,
+      likes: 0,
+      imageClassName: "from-surface-strong to-surface",
+      imageUrl: payload.mediaUrl,
+      availableSizes: payload.availableSizes,
+      details: payload.details,
+    };
+
+    dynamicCreations.unshift(creation);
+    return creation;
   },
 
   async search(filters) {

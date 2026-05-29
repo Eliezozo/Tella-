@@ -9,12 +9,11 @@ export function AddCreationCard() {
         Publiez une photo, un prix indicatif et les tailles disponibles pour votre vitrine.
       </p>
       <Link
-        href="/dashboard/creations"
+        href="/dashboard/creations/nouvelle"
         className="mt-5 inline-flex min-h-10 items-center justify-center rounded-md bg-primary px-5 text-sm font-semibold text-on-primary hover:bg-primary-strong"
       >
-        Préparer une création
+        Ajouter une création
       </Link>
-      <p className="mt-3 text-xs text-muted">Enregistrement mock — branchement base à venir</p>
     </div>
   );
 }
