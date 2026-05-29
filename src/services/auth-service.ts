@@ -2,6 +2,7 @@ import { getDataSourceMode } from "@/lib/data-source";
 import { ensureUniqueHandle, slugifyHandle } from "@/lib/handle";
 import { hashPassword, verifyPassword } from "@/lib/password";
 import { normalizePhone } from "@/lib/phone";
+import { withPrismaRetry } from "@/lib/prisma-retry";
 import {
   loginSchema,
   registerTailorSchema,
@@ -19,6 +20,7 @@ import type {
 export type AuthErrorCode =
   | "VALIDATION"
   | "EMAIL_EXISTS"
+  | "PHONE_EXISTS"
   | "INVALID_CREDENTIALS"
   | "NO_PASSWORD"
   | "ACCOUNT_PENDING";
@@ -78,8 +80,21 @@ export async function registerTailor(
   }
 
   const repo = getAuthRepository();
-  const existing = await repo.findByEmail(parsed.data.email);
-  if (existing) {
+  const usePrisma = getDataSourceMode() === "prisma";
+
+  const runAuthDb = <T>(operation: () => Promise<T>) =>
+    usePrisma ? withPrismaRetry(operation) : operation();
+
+  if (getDataSourceMode() === "mock" && process.env.DATABASE_URL) {
+    console.warn(
+      "[registerTailor] MODE MOCK actif — l'inscription ne sera pas enregistrée en base. Ajoutez USE_PRISMA=true dans .env puis redémarrez le serveur.",
+    );
+  }
+
+  const normalizedWhatsapp = normalizePhone(parsed.data.whatsapp);
+
+  const existingEmail = await runAuthDb(() => repo.findByEmail(parsed.data.email));
+  if (existingEmail) {
     throw new AuthServiceError(
       "Cette adresse email est déjà utilisée.",
       "EMAIL_EXISTS",
@@ -87,7 +102,16 @@ export async function registerTailor(
     );
   }
 
-  const handles = await repo.getAllHandles();
+  const existingPhone = await runAuthDb(() => repo.findByPhone(normalizedWhatsapp));
+  if (existingPhone) {
+    throw new AuthServiceError(
+      "Ce numéro WhatsApp est déjà utilisé.",
+      "PHONE_EXISTS",
+      { whatsapp: ["Compte existant avec ce numéro WhatsApp."] },
+    );
+  }
+
+  const handles = await runAuthDb(() => repo.getAllHandles());
   const baseHandle = slugifyHandle(parsed.data.atelierName);
   const handle = ensureUniqueHandle(baseHandle, handles);
   const passwordHash = await hashPassword(parsed.data.password);
@@ -99,7 +123,7 @@ export async function registerTailor(
   const payload: RegisterTailorPayload = {
     atelierName: parsed.data.atelierName.trim(),
     city: parsed.data.city,
-    whatsapp: normalizePhone(parsed.data.whatsapp),
+    whatsapp: normalizedWhatsapp,
     specialties: parsed.data.specialties,
     description: parsed.data.description.trim(),
     email: parsed.data.email.toLowerCase().trim(),
@@ -107,11 +131,13 @@ export async function registerTailor(
     heroLabel,
   };
 
-  const created = await repo.registerTailor({
-    ...payload,
-    passwordHash,
-    handle,
-  });
+  const created = await runAuthDb(() =>
+    repo.registerTailor({
+      ...payload,
+      passwordHash,
+      handle,
+    }),
+  );
 
   return {
     userId: created.userId,
@@ -135,7 +161,10 @@ export async function authenticateUser(
   }
 
   const repo = getAuthRepository();
-  const record = await repo.findByIdentifier(parsed.data.identifier);
+  const record =
+    getDataSourceMode() === "prisma"
+      ? await withPrismaRetry(() => repo.findByIdentifier(parsed.data.identifier))
+      : await repo.findByIdentifier(parsed.data.identifier);
 
   if (!record?.passwordHash) {
     throw new AuthServiceError(
@@ -160,8 +189,13 @@ export async function authenticateUser(
 }
 
 export function getDemoCredentialsHint(): string | null {
-  if (getDataSourceMode() === "prisma") {
-    return "Couturière : ama@tella.tg / TellaDemo2026 — Admin : admin@tella.tg / TellaDemo2026";
+  if (process.env.NODE_ENV === "production") {
+    return null;
   }
-  return "Compte démo : ama@tella.tg / TellaDemo2026";
+
+  if (getDataSourceMode() !== "mock") {
+    return null;
+  }
+
+  return "Mode démonstration local : ama@tella.tg / TellaDemo2026";
 }

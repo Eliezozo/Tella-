@@ -31,3 +31,18 @@ export function shouldFallbackToMockOnDbError(): boolean {
   if (process.env.PRISMA_FALLBACK_MOCK === "true") return true;
   return process.env.NODE_ENV === "development";
 }
+
+/** Message utilisateur pour les erreurs Prisma (inscription, connexion…). */
+export function toUserFacingDatabaseMessage(error: unknown): string {
+  if (isPrismaConnectionError(error)) {
+    return "La base de données est momentanément indisponible. Attendez quelques secondes et réessayez.";
+  }
+
+  if (error instanceof Prisma.PrismaClientKnownRequestError) {
+    if (error.code === "P2002") {
+      return "Cette adresse email ou ce numéro est déjà utilisé.";
+    }
+  }
+
+  return "Une erreur est survenue. Réessayez dans un instant.";
+}

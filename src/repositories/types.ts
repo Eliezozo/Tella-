@@ -46,6 +46,7 @@ export interface AuthRepository {
     isApproved: boolean;
   } | null>;
   findByEmail(email: string): Promise<{ id: string } | null>;
+  findByPhone(phone: string): Promise<{ id: string } | null>;
   getAllHandles(): Promise<string[]>;
   registerTailor(payload: {
     atelierName: string;

@@ -1,4 +1,5 @@
 import { tailorProfiles } from "@/lib/mock-data";
+import { normalizePhone } from "@/lib/phone";
 import type { TailorProfile } from "@/types";
 import type { AuthRepository } from "@/repositories/types";
 
@@ -82,6 +83,14 @@ export const mockAuthRepository: AuthRepository = {
 
   async findByEmail(email) {
     const user = mockUsers.find((u) => u.email.toLowerCase() === email.toLowerCase());
+    return user ? { id: user.id } : null;
+  },
+
+  async findByPhone(phone) {
+    const normalized = normalizePhone(phone);
+    const user = mockUsers.find(
+      (u) => u.phone && normalizePhone(u.phone) === normalized,
+    );
     return user ? { id: user.id } : null;
   },
 

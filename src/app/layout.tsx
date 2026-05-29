@@ -1,23 +1,5 @@
 import type { Metadata } from "next";
-import { Cormorant_Garamond, DM_Sans, Inter } from "next/font/google";
 import "./globals.css";
-
-const logoFont = Cormorant_Garamond({
-  variable: "--font-logo",
-  subsets: ["latin"],
-  weight: ["400", "500", "600", "700"],
-});
-
-const headingFont = DM_Sans({
-  variable: "--font-heading",
-  subsets: ["latin"],
-  weight: ["400", "500", "600", "700"],
-});
-
-const bodyFont = Inter({
-  variable: "--font-body",
-  subsets: ["latin"],
-});
 
 export const metadata: Metadata = {
   metadataBase: new URL("https://tella.com"),
@@ -72,10 +54,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html
-      lang="fr"
-      className={`${logoFont.variable} ${headingFont.variable} ${bodyFont.variable} h-full antialiased`}
-    >
+    <html lang="fr" className="h-full antialiased">
       <body className="app-shell min-h-full font-sans text-foreground">{children}</body>
     </html>
   );

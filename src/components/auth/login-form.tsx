@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { useActionState, useRef } from "react";
+import { useActionState } from "react";
 
 import { loginAction } from "@/actions/auth-actions";
 import { authFormInitialState } from "@/lib/auth-form-state";
@@ -15,9 +15,6 @@ function fieldError(
   return fieldErrors?.[key]?.[0];
 }
 
-const DEMO_EMAIL = "ama@tella.tg";
-const DEMO_PASSWORD = "TellaDemo2026";
-
 export function LoginForm({
   callbackUrl = "/dashboard",
   demoHint,
@@ -26,20 +23,9 @@ export function LoginForm({
   demoHint?: string | null;
 }) {
   const [state, formAction, isPending] = useActionState(loginAction, authFormInitialState);
-  const formRef = useRef<HTMLFormElement>(null);
-
-  function fillDemoAndSubmit() {
-    const form = formRef.current;
-    if (!form) return;
-    const identifier = form.elements.namedItem("identifier") as HTMLInputElement | null;
-    const password = form.elements.namedItem("password") as HTMLInputElement | null;
-    if (identifier) identifier.value = DEMO_EMAIL;
-    if (password) password.value = DEMO_PASSWORD;
-    form.requestSubmit();
-  }
 
   return (
-    <form ref={formRef} action={formAction} className="mt-8">
+    <form action={formAction} className="mt-8">
       <input type="hidden" name="callbackUrl" value={callbackUrl} />
 
       {demoHint ? (
@@ -81,17 +67,6 @@ export function LoginForm({
       >
         {isPending ? "Connexion…" : "Se connecter"}
       </button>
-
-      {demoHint ? (
-        <button
-          type="button"
-          disabled={isPending}
-          onClick={fillDemoAndSubmit}
-          className="mt-3 inline-flex min-h-11 w-full items-center justify-center rounded-md border border-border bg-surface px-5 py-2.5 text-sm font-semibold text-foreground hover:border-primary hover:text-primary disabled:opacity-60"
-        >
-          Connexion démo (Atelier Ama)
-        </button>
-      ) : null}
 
       <p className="mt-4 text-center text-sm text-muted">
         Pas encore de compte ?{" "}

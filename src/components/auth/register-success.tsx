@@ -1,28 +1,34 @@
 import Link from "next/link";
 
+import { REGISTER_SUCCESS_MESSAGE } from "@/lib/auth-messages";
+
 export function RegisterSuccess({
   atelierName,
   handle,
   email,
+  message,
 }: {
   atelierName: string;
   handle: string;
   email: string;
+  message?: string;
 }) {
+  const body = message ?? REGISTER_SUCCESS_MESSAGE;
+
   return (
     <div className="mt-8 space-y-6">
       <div
         role="status"
-        className="rounded-md border border-success/40 bg-success/10 px-5 py-5"
+        aria-live="polite"
+        className="rounded-md border border-success/40 bg-success/10 px-5 py-6"
       >
-        <p className="text-sm font-semibold text-success">
-          ✓ Demande enregistrée pour {atelierName}
+        <p className="text-lg font-semibold text-success">
+          Compte créé avec succès
         </p>
-        <p className="mt-3 text-sm leading-6 text-foreground">
-          Notre équipe a été notifiée et va vérifier votre inscription sous 48 h.
-          Vous pourrez vous connecter à votre espace atelier une fois la validation
-          confirmée.
+        <p className="mt-2 text-sm font-medium text-foreground">
+          {atelierName}
         </p>
+        <p className="mt-3 text-sm leading-6 text-foreground">{body}</p>
       </div>
 
       <dl className="space-y-3 rounded-md border border-border bg-background px-4 py-4 text-sm">
@@ -38,15 +44,15 @@ export function RegisterSuccess({
 
       <ol className="space-y-2 text-sm text-muted">
         <li>1. L&apos;équipe Tella vérifie votre inscription (sous 48 h).</li>
-        <li>2. Vous vous connectez avec l&apos;email ci-dessus.</li>
-        <li>3. Vous complétez vos créations dans votre dashboard atelier.</li>
+        <li>2. Vous recevez la confirmation après validation de l&apos;atelier.</li>
+        <li>3. Vous pourrez alors vous connecter avec l&apos;email ci-dessus.</li>
       </ol>
 
       <Link
-        href="/login"
+        href="/"
         className="inline-flex min-h-11 w-full items-center justify-center rounded-md bg-primary px-5 py-2.5 text-sm font-semibold tracking-wide text-on-primary hover:bg-primary-strong"
       >
-        Aller à la connexion
+        Retour à l&apos;accueil
       </Link>
     </div>
   );

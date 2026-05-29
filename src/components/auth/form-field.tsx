@@ -35,7 +35,7 @@ export function FormField({
           className="mt-2 w-full rounded-md border border-border bg-background px-4 py-2.5 text-sm text-foreground outline-none focus:border-primary"
         />
       )}
-      {error ? <p className="mt-1.5 text-xs text-primary">{error}</p> : null}
+      {error ? <p className="mt-1.5 text-xs text-danger">{error}</p> : null}
     </label>
   );
 }

@@ -6,8 +6,11 @@ import { redirect } from "next/navigation";
 import { signIn, signOut } from "@/auth";
 import { isNextNavigationError } from "@/lib/next-errors";
 import type { AuthFormState } from "@/lib/auth-form-state";
+import { REGISTER_SUCCESS_MESSAGE } from "@/lib/auth-messages";
+import { getDataSourceMode } from "@/lib/data-source";
 import { notifyAdminNewAtelier } from "@/lib/notifications/notify-admin-new-atelier";
 import { parseRegisterFormData } from "@/lib/parse-register-form";
+import { toUserFacingDatabaseMessage } from "@/lib/prisma-errors";
 import { sanitizeCallbackUrl } from "@/lib/safe-redirect";
 import {
   ACCOUNT_PENDING_MESSAGE,
@@ -15,9 +18,6 @@ import {
   authenticateUser,
   registerTailor,
 } from "@/services/auth-service";
-
-const REGISTER_SUCCESS_MESSAGE =
-  "Inscription enregistrée. Votre compte sera activé après validation par l'équipe Tella — vous pourrez alors vous connecter.";
 
 function flattenFieldErrors(
   errors?: Record<string, string[] | undefined>,
@@ -38,6 +38,11 @@ export async function registerTailorAction(
 
   try {
     const created = await registerTailor(parsed);
+
+    console.info(
+      "[registerTailorAction] inscription OK",
+      { email: created.email, handle: created.handle, source: getDataSourceMode() },
+    );
 
     // Notification admin (fire-and-forget : ne doit jamais bloquer l'inscription).
     void notifyAdminNewAtelier({
@@ -62,6 +67,9 @@ export async function registerTailorAction(
     };
   } catch (error) {
     if (error instanceof AuthServiceError) {
+      if (error.code === "VALIDATION") {
+        console.warn("[registerTailorAction] validation:", error.fieldErrors);
+      }
       return {
         ok: false,
         message: error.message,
@@ -76,7 +84,7 @@ export async function registerTailorAction(
     }
     return {
       ok: false,
-      message: "Une erreur est survenue. Réessayez dans un instant.",
+      message: toUserFacingDatabaseMessage(error),
     };
   }
 }
@@ -90,7 +98,7 @@ export async function loginAction(
   const callbackUrl = sanitizeCallbackUrl(formData.get("callbackUrl"));
 
   try {
-    await authenticateUser({ identifier, password });
+    const user = await authenticateUser({ identifier, password });
 
     const signInResult = await signIn("credentials", {
       identifier,
@@ -111,7 +119,11 @@ export async function loginAction(
       };
     }
 
-    redirect(callbackUrl);
+    redirect(
+      user.role === "ADMIN" && callbackUrl === "/dashboard"
+        ? "/dashboard/demandes"
+        : callbackUrl,
+    );
   } catch (error) {
     if (isNextNavigationError(error)) {
       throw error;
@@ -140,7 +152,7 @@ export async function loginAction(
     }
     return {
       ok: false,
-      message: "Connexion impossible pour le moment.",
+      message: toUserFacingDatabaseMessage(error),
     };
   }
 }

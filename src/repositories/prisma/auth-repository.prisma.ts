@@ -47,6 +47,17 @@ export const prismaAuthRepository: AuthRepository = {
     return row;
   },
 
+  async findByPhone(phone) {
+    const normalizedPhone = normalizePhone(phone);
+    const row = await prisma.user.findFirst({
+      where: {
+        OR: [{ phone }, { phone: normalizedPhone }],
+      },
+      select: { id: true },
+    });
+    return row;
+  },
+
   async getAllHandles() {
     const rows = await prisma.tailorProfile.findMany({ select: { handle: true } });
     return rows.map((r) => r.handle);
