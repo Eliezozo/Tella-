@@ -1,4 +1,5 @@
 import type { Creation, PricingPlan, Review, TailorProfile } from "@/types";
+import { showcaseImageSrc } from "@/lib/showcase-images";
 
 export const tailorProfiles: TailorProfile[] = [
   {
@@ -15,8 +16,8 @@ export const tailorProfiles: TailorProfile[] = [
     completedOrders: 248,
     responseRate: 97,
     heroLabel: "Couture premium pour cérémonies et événements",
-    avatarUrl: "/images/landing/cat-traditionnel.jpg",
-    coverUrl: "/images/landing/hero-main.jpg",
+    avatarUrl: showcaseImageSrc(2),
+    coverUrl: showcaseImageSrc(0),
   },
   {
     id: "t2",
@@ -32,8 +33,8 @@ export const tailorProfiles: TailorProfile[] = [
     completedOrders: 173,
     responseRate: 95,
     heroLabel: "Atelier moderne pour silhouettes nettes et fiables",
-    avatarUrl: "/images/landing/step-contact.jpg",
-    coverUrl: "/images/landing/cat-homme.jpg",
+    avatarUrl: showcaseImageSrc(4),
+    coverUrl: showcaseImageSrc(1),
   },
   {
     id: "t3",
@@ -49,8 +50,8 @@ export const tailorProfiles: TailorProfile[] = [
     completedOrders: 109,
     responseRate: 92,
     heroLabel: "Mode locale expressive, pensée pour le mobile-first",
-    avatarUrl: "/images/landing/cat-robes.jpg",
-    coverUrl: "/images/landing/cat-traditionnel.jpg",
+    avatarUrl: showcaseImageSrc(3),
+    coverUrl: showcaseImageSrc(5),
   },
 ];
 
@@ -65,7 +66,7 @@ export const creations: Creation[] = [
     turnaround: "7 jours",
     likes: 320,
     imageClassName: "from-[#ff8e7f] via-[#ffd6c7] to-[#fff4ee]",
-    imageUrl: "/images/landing/cat-robes.jpg",
+    imageUrl: showcaseImageSrc(0),
     palette: {
       backgroundMain: "#FFFFFF",
       backgroundSidebar: "#9E978E",
@@ -104,7 +105,7 @@ export const creations: Creation[] = [
     turnaround: "5 jours",
     likes: 187,
     imageClassName: "from-[#efb286] via-[#f7d0a9] to-[#fff0db]",
-    imageUrl: "/images/landing/cat-traditionnel.jpg",
+    imageUrl: showcaseImageSrc(1),
     palette: {
       backgroundMain: "#FFFFFF",
       backgroundSidebar: "#A3886C",
@@ -143,7 +144,7 @@ export const creations: Creation[] = [
     turnaround: "6 jours",
     likes: 205,
     imageClassName: "from-[#596579] via-[#b0b9c8] to-[#edf0f4]",
-    imageUrl: "/images/landing/cat-homme.jpg",
+    imageUrl: showcaseImageSrc(2),
     palette: {
       backgroundMain: "#FFFFFF",
       backgroundSidebar: "#8D949A",
@@ -182,7 +183,7 @@ export const creations: Creation[] = [
     turnaround: "4 jours",
     likes: 112,
     imageClassName: "from-[#6c8aa3] via-[#d2dde8] to-[#f8fbff]",
-    imageUrl: "/images/landing/cat-uniformes.jpg",
+    imageUrl: showcaseImageSrc(3),
     palette: {
       backgroundMain: "#FFFFFF",
       backgroundSidebar: "#8FA0AE",
@@ -221,7 +222,7 @@ export const creations: Creation[] = [
     turnaround: "3 jours",
     likes: 146,
     imageClassName: "from-[#ffbe71] via-[#ffe0b3] to-[#fff7e7]",
-    imageUrl: "/images/landing/cat-enfant.jpg",
+    imageUrl: showcaseImageSrc(4),
     palette: {
       backgroundMain: "#FFFFFF",
       backgroundSidebar: "#C7A06C",
@@ -260,7 +261,7 @@ export const creations: Creation[] = [
     turnaround: "5 jours",
     likes: 164,
     imageClassName: "from-[#ff8b91] via-[#ffd3d8] to-[#fff6f7]",
-    imageUrl: "/images/landing/hero-dress.jpg",
+    imageUrl: showcaseImageSrc(5),
     palette: {
       backgroundMain: "#FFFFFF",
       backgroundSidebar: "#A99997",

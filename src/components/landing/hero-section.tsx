@@ -1,7 +1,6 @@
 import { Button } from "@/components/ui/button";
-import { OptimizedImage } from "@/components/ui/optimized-image";
+import { LandingShowcaseMarquee } from "@/components/landing/landing-showcase-marquee";
 import { StatCard } from "@/components/ui/stat-card";
-import { landingImages } from "@/lib/images";
 import { cn } from "@/lib/utils";
 
 const proofStats = [
@@ -61,47 +60,7 @@ export function HeroSection() {
           </div>
         </div>
 
-        <div className="space-y-3">
-          <div
-            className={cn(
-              "illustration-frame relative aspect-[4/5] min-h-[280px] w-full sm:min-h-[360px] hero-animate hero-animate-right hero-delay-4",
-            )}
-          >
-            <OptimizedImage
-              src={landingImages.heroMain}
-              alt="Artisan couturière au travail"
-              fill
-              priority
-              sizes="(max-width: 1024px) 100vw, 50vw"
-            />
-          </div>
-          <div className="grid grid-cols-2 gap-3">
-            <div
-              className={cn(
-                "illustration-frame relative aspect-[3/4] min-h-[140px] w-full hero-animate hero-animate-right hero-delay-6",
-              )}
-            >
-              <OptimizedImage
-                src={landingImages.heroDress}
-                alt="Création mode sur mesure"
-                fill
-                sizes="200px"
-              />
-            </div>
-            <div
-              className={cn(
-                "illustration-frame relative aspect-square min-h-[140px] w-full hero-animate hero-animate-right hero-delay-7",
-              )}
-            >
-              <OptimizedImage
-                src={landingImages.heroClient}
-                alt="Cliente découvrant une création"
-                fill
-                sizes="200px"
-              />
-            </div>
-          </div>
-        </div>
+        <LandingShowcaseMarquee />
       </div>
     </section>
   );

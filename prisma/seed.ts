@@ -9,6 +9,7 @@ import {
   reviews,
   tailorProfiles,
 } from "../src/lib/mock-data";
+import { showcaseImageSrc } from "../src/lib/showcase-images";
 import { PrismaClient, SubscriptionStatus, UserRole } from "@prisma/client";
 
 const DEMO_PASSWORD_HASH = hashSync("TellaDemo2026", 12);
@@ -104,7 +105,7 @@ async function main() {
         categoryId: categoryMap.get(creation.category),
         title: creation.title,
         description: creation.title,
-        mediaUrl: creation.imageUrl ?? "/images/landing/cat-robes.jpg",
+        mediaUrl: creation.imageUrl ?? showcaseImageSrc(0),
         priceFrom: creation.priceFrom,
         turnaroundLabel: creation.turnaround,
         likesCount: creation.likes,

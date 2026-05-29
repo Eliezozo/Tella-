@@ -244,4 +244,55 @@ button {
     filter: none;
     transform: none;
   }
+
+  .showcase-marquee-row {
+    animation: none;
+  }
+}
+
+/* Landing — défilement oblique gauche → droite */
+.showcase-oblique {
+  position: absolute;
+  inset: -8% -25%;
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+  transform: rotate(-7deg);
+}
+
+.showcase-marquee-row {
+  display: flex;
+  width: max-content;
+  gap: 0.875rem;
+  animation-name: showcaseScrollRight;
+  animation-timing-function: linear;
+  animation-iteration-count: infinite;
+}
+
+.showcase-marquee-duration-a {
+  animation-duration: 38s;
+}
+
+.showcase-marquee-duration-b {
+  animation-duration: 46s;
+  animation-delay: -8s;
+}
+
+@keyframes showcaseScrollRight {
+  from {
+    transform: translateX(-50%);
+  }
+  to {
+    transform: translateX(0);
+  }
+}
+
+.showcase-marquee-fade {
+  background: linear-gradient(
+    90deg,
+    var(--background) 0%,
+    transparent 12%,
+    transparent 88%,
+    var(--background) 100%
+  );
 }

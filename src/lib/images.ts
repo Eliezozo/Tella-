@@ -1,18 +1,20 @@
+import { showcaseImageSrc } from "@/lib/showcase-images";
+
 export const landingImages = {
-  heroMain: "/images/landing/hero-main.jpg",
-  heroDress: "/images/landing/hero-dress.jpg",
-  heroClient: "/images/landing/hero-client.jpg",
-  stepDiscover: "/images/landing/step-discover.jpg",
-  stepContact: "/images/landing/step-contact.jpg",
-  stepCreate: "/images/landing/step-create.jpg",
-  authSide: "/images/landing/hero-main.jpg",
+  heroMain: showcaseImageSrc(0),
+  heroDress: showcaseImageSrc(1),
+  heroClient: showcaseImageSrc(2),
+  stepDiscover: showcaseImageSrc(3),
+  stepContact: showcaseImageSrc(4),
+  stepCreate: showcaseImageSrc(5),
+  authSide: showcaseImageSrc(0),
 } as const;
 
 export const categoryImages: Record<string, string> = {
-  robes: "/images/landing/cat-robes.jpg",
-  homme: "/images/landing/cat-homme.jpg",
-  mariage: "/images/landing/cat-mariage.jpg",
-  enfant: "/images/landing/cat-enfant.jpg",
-  uniformes: "/images/landing/cat-uniformes.jpg",
-  traditionnel: "/images/landing/cat-traditionnel.jpg",
+  robes: showcaseImageSrc(0),
+  homme: showcaseImageSrc(1),
+  mariage: showcaseImageSrc(2),
+  enfant: showcaseImageSrc(3),
+  uniformes: showcaseImageSrc(4),
+  traditionnel: showcaseImageSrc(5),
 };
