@@ -1,4 +1,5 @@
 import { DashboardShell } from "@/components/layout/dashboard-shell";
+import { TailorProfileForm } from "@/components/dashboard/tailor-profile-form";
 import { toTailorProfilePath } from "@/lib/handle";
 import { requireSession, requireTailorSession } from "@/lib/session";
 import { getTailorById } from "@/services/tailor-service";
@@ -26,46 +27,22 @@ export default async function DashboardSettingsPage() {
       );
     }
 
-    const fields = [
-      { label: "Nom de l'atelier", value: tailor.atelierName },
-      { label: "Ville", value: tailor.city },
-      { label: "Numéro WhatsApp", value: tailor.whatsapp },
-      { label: "Accroche", value: tailor.heroLabel },
-      { label: "Description", value: tailor.description },
-      { label: "Spécialités", value: tailor.specialties.join(", ") },
-    ];
-
     return (
       <DashboardShell
         session={tailorSession}
         workspaceLabel="Mon atelier"
         title="Paramètres de l'atelier"
-        description="Modifiez les informations affichées sur votre vitrine publique."
+        description="Personnalisez votre vitrine publique avec vos photos et bannière."
       >
-        <div className="surface-card p-5">
-          <p className="mb-4 text-sm text-muted">
-            Les champs ci-dessous reflètent votre profil actuel. L&apos;enregistrement sera
-            disponible dans une prochaine version.
+        <TailorProfileForm tailor={tailor} />
+        {user.handle ? (
+          <p className="mt-5 text-sm text-muted">
+            Vitrine publique :{" "}
+            <a href={toTailorProfilePath(user.handle)} className="font-semibold text-primary hover:underline">
+              {user.handle}
+            </a>
           </p>
-          <div className="grid gap-4 sm:grid-cols-2">
-            {fields.map((field) => (
-              <div key={field.label} className="rounded-md border border-border bg-background p-4">
-                <p className="text-xs font-semibold uppercase tracking-wide text-muted">
-                  {field.label}
-                </p>
-                <p className="mt-2 text-sm leading-6 text-foreground">{field.value}</p>
-              </div>
-            ))}
-          </div>
-          {user.handle ? (
-            <p className="mt-5 text-sm text-muted">
-              Vitrine publique :{" "}
-              <a href={toTailorProfilePath(user.handle)} className="font-semibold text-primary hover:underline">
-                {user.handle}
-              </a>
-            </p>
-          ) : null}
-        </div>
+        ) : null}
       </DashboardShell>
     );
   }

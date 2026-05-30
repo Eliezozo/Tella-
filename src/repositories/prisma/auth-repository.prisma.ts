@@ -58,6 +58,14 @@ export const prismaAuthRepository: AuthRepository = {
     return row;
   },
 
+  async findByAtelierName(atelierName) {
+    const row = await prisma.tailorProfile.findFirst({
+      where: { atelierName: { equals: atelierName.trim(), mode: "insensitive" } },
+      select: { id: true },
+    });
+    return row;
+  },
+
   async getAllHandles() {
     const rows = await prisma.tailorProfile.findMany({ select: { handle: true } });
     return rows.map((r) => r.handle);

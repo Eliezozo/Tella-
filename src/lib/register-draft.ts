@@ -1,6 +1,7 @@
 import type { RegisterTailorInput } from "@/lib/validations/auth";
 
 export type RegisterDraft = {
+  handle: string;
   atelierName: string;
   city: string;
   heroLabel: string;
@@ -14,6 +15,7 @@ export type RegisterDraft = {
 };
 
 export const emptyRegisterDraft: RegisterDraft = {
+  handle: "",
   atelierName: "",
   city: "",
   heroLabel: "",
@@ -40,6 +42,7 @@ export function mergeRegisterDraft(
 /** Fusionne le brouillon React et les champs visibles du formulaire. */
 export function registerPayloadToFormData(payload: RegisterDraft): FormData {
   const formData = new FormData();
+  formData.set("handle", payload.handle);
   formData.set("atelierName", payload.atelierName);
   formData.set("city", payload.city);
   formData.set("heroLabel", payload.heroLabel);
@@ -67,6 +70,7 @@ export function toRegisterPayload(
     .filter(Boolean);
 
   return {
+    handle: String(formData.get("handle") ?? draft.handle).trim(),
     atelierName: String(formData.get("atelierName") ?? draft.atelierName).trim(),
     city: String(formData.get("city") ?? draft.city).trim(),
     heroLabel: String(formData.get("heroLabel") ?? draft.heroLabel ?? "").trim(),

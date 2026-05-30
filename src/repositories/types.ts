@@ -18,6 +18,10 @@ export interface TailorRepository {
   findById(id: string): Promise<TailorProfile | null>;
   search(filters: TailorSearchFilters): Promise<TailorProfile[]>;
   getCities(): Promise<string[]>;
+  updateProfileImages(
+    id: string,
+    data: { avatarUrl?: string; bannerUrl?: string },
+  ): Promise<TailorProfile>;
 }
 
 export type CreateCreationPayload = {
@@ -63,6 +67,7 @@ export interface AuthRepository {
   } | null>;
   findByEmail(email: string): Promise<{ id: string } | null>;
   findByPhone(phone: string): Promise<{ id: string } | null>;
+  findByAtelierName(atelierName: string): Promise<{ id: string } | null>;
   getAllHandles(): Promise<string[]>;
   registerTailor(payload: {
     atelierName: string;

@@ -3,6 +3,7 @@ import { togoCities } from "@/lib/constants/cities";
 
 export const registerStep1Schema = registerTailorBaseSchema
   .pick({
+    handle: true,
     atelierName: true,
     city: true,
     heroLabel: true,

@@ -1,5 +1,5 @@
-import { creations, tailorProfiles } from "@/lib/mock-data";
 import { slugifyText } from "@/lib/slug";
+import { getDynamicTailors } from "@/repositories/mock/auth-repository.mock";
 import type {
   CreateCreationPayload,
   CreationRepository,
@@ -10,7 +10,7 @@ import type { Creation } from "@/types";
 const dynamicCreations: Creation[] = [];
 
 function allCreations(): Creation[] {
-  return [...creations, ...dynamicCreations];
+  return dynamicCreations;
 }
 
 function filterCreations(filters: CreationSearchFilters): Creation[] {
@@ -23,10 +23,11 @@ function filterCreations(filters: CreationSearchFilters): Creation[] {
 
     if (query) {
       const normalized = query.toLowerCase();
-      const tailor = tailorProfiles.find((t) => t.id === creation.tailorId);
+      const tailor = getDynamicTailors().find((t) => t.id === creation.tailorId);
       const matchesTitle = creation.title.toLowerCase().includes(normalized);
       const matchesTailor = tailor?.atelierName.toLowerCase().includes(normalized) ?? false;
-      if (!matchesTitle && !matchesTailor) {
+      const matchesHandle = tailor?.handle.toLowerCase().includes(normalized) ?? false;
+      if (!matchesTitle && !matchesTailor && !matchesHandle) {
         return false;
       }
     }

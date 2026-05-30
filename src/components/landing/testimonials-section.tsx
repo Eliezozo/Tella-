@@ -14,17 +14,24 @@ export async function TestimonialsSection() {
           align="center"
         />
         <div className="grid gap-4 md:grid-cols-3">
-          {reviews.map((review) => (
-            <article key={review.id} className="surface-card p-5">
-              <p className="text-sm text-primary">
-                {Array.from({ length: review.rating }, () => "★").join("")}
-              </p>
-              <p className="mt-3 text-sm leading-7 text-foreground">{review.comment}</p>
-              <p className="mt-4 text-xs font-semibold uppercase tracking-wide text-secondary">
-                {review.author}
-              </p>
-            </article>
-          ))}
+          {reviews.length > 0 ? (
+            reviews.map((review) => (
+              <article key={review.id} className="surface-card p-5">
+                <p className="text-sm text-primary">
+                  {Array.from({ length: review.rating }, () => "★").join("")}
+                </p>
+                <p className="mt-3 text-sm leading-7 text-foreground">{review.comment}</p>
+                <p className="mt-4 text-xs font-semibold uppercase tracking-wide text-secondary">
+                  {review.author}
+                </p>
+              </article>
+            ))
+          ) : (
+            <p className="col-span-full text-center text-sm text-muted">
+              Les premiers avis clientes apparaîtront ici dès qu&apos;elles laisseront un retour
+              sur un atelier Tella.
+            </p>
+          )}
         </div>
       </div>
     </section>

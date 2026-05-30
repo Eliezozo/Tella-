@@ -2,14 +2,20 @@ import { Button } from "@/components/ui/button";
 import { LandingShowcaseMarquee } from "@/components/landing/landing-showcase-marquee";
 import { StatCard } from "@/components/ui/stat-card";
 import { cn } from "@/lib/utils";
+import {
+  formatPlatformStat,
+  getPlatformPublicStats,
+} from "@/services/platform-stats-service";
 
-const proofStats = [
-  ["48", "couturières abonnées"],
-  ["1 284", "utilisatrices clientes"],
-  ["318", "demandes via WhatsApp"],
-] as const;
+export async function HeroSection() {
+  const stats = await getPlatformPublicStats();
 
-export function HeroSection() {
+  const proofStats = [
+    [formatPlatformStat(stats.publishedTailors), "ateliers actifs"],
+    [formatPlatformStat(stats.totalClients), "clientes inscrites"],
+    [formatPlatformStat(stats.whatsappClicks), "contacts WhatsApp"],
+  ] as const;
+
   return (
     <section className="section-padding overflow-hidden border-b border-border">
       <div className="container-width grid gap-12 lg:grid-cols-2 lg:items-center">
@@ -58,6 +64,11 @@ export function HeroSection() {
               </div>
             ))}
           </div>
+          {stats.publishedTailors === 0 ? (
+            <p className="mt-4 text-xs text-muted">
+              Chiffres mis à jour en temps réel depuis la plateforme Tella.
+            </p>
+          ) : null}
         </div>
 
         <LandingShowcaseMarquee />

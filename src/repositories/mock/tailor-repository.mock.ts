@@ -1,14 +1,13 @@
-import { tailorProfiles } from "@/lib/mock-data";
 import { getDynamicTailors } from "@/repositories/mock/auth-repository.mock";
 import type { TailorRepository, TailorSearchFilters } from "@/repositories/types";
 import type { TailorProfile } from "@/types";
 
 function isPublicTailor(tailor: TailorProfile) {
-  return (tailor.isApproved ?? true) && (tailor.isPublished ?? true);
+  return (tailor.isApproved ?? false) && (tailor.isPublished ?? false);
 }
 
 function allTailors(): TailorProfile[] {
-  return [...tailorProfiles, ...getDynamicTailors()];
+  return getDynamicTailors();
 }
 
 function publicTailors(): TailorProfile[] {
@@ -30,11 +29,12 @@ function filterTailors(filters: TailorSearchFilters): TailorProfile[] {
     if (query) {
       const normalized = query.toLowerCase();
       const matchesName = tailor.atelierName.toLowerCase().includes(normalized);
+      const matchesHandle = tailor.handle.toLowerCase().includes(normalized);
       const matchesDesc = tailor.description.toLowerCase().includes(normalized);
       const matchesSpecialty = tailor.specialties.some((s) =>
         s.toLowerCase().includes(normalized),
       );
-      if (!matchesName && !matchesDesc && !matchesSpecialty) {
+      if (!matchesName && !matchesHandle && !matchesDesc && !matchesSpecialty) {
         return false;
       }
     }
@@ -69,5 +69,19 @@ export const mockTailorRepository: TailorRepository = {
 
   async getCities() {
     return [...new Set(publicTailors().map((t) => t.city))];
+  },
+
+  async updateProfileImages(id, data) {
+    const tailor = allTailors().find((item) => item.id === id);
+    if (!tailor) {
+      throw new Error("Profil atelier introuvable.");
+    }
+    if (data.avatarUrl !== undefined) {
+      tailor.avatarUrl = data.avatarUrl;
+    }
+    if (data.bannerUrl !== undefined) {
+      tailor.coverUrl = data.bannerUrl;
+    }
+    return tailor;
   },
 };

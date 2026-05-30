@@ -1,13 +1,7 @@
 import { DashboardShell } from "@/components/layout/dashboard-shell";
 import { Badge } from "@/components/ui/badge";
 import { requireSession } from "@/lib/session";
-
-const subscriptions = [
-  ["Atelier Ama", "Plan annuel", "actif", "30 juin 2026"],
-  ["Studio Kekeli", "Plan trimestriel", "relance", "15 avril 2026"],
-  ["Mawufe Design", "Plan annuel", "actif", "12 août 2026"],
-  ["Couture Lomé+", "Plan trimestriel", "expiré", "1 mars 2026"],
-];
+import { getAdminSubscriptions } from "@/services/admin-dashboard-service";
 
 const statusVariant = {
   actif: "success" as const,
@@ -17,6 +11,7 @@ const statusVariant = {
 
 export default async function DashboardOrdersPage() {
   const session = await requireSession();
+  const subscriptions = await getAdminSubscriptions();
 
   return (
     <DashboardShell
@@ -31,21 +26,28 @@ export default async function DashboardOrdersPage() {
           <span>Statut</span>
           <span>Échéance</span>
         </div>
-        <div className="divide-y divide-border">
-          {subscriptions.map(([name, plan, status, date]) => (
-            <div
-              key={name}
-              className="grid gap-2 px-5 py-4 sm:grid-cols-[1.5fr_1fr_0.8fr_1fr] sm:items-center sm:gap-4"
-            >
-              <p className="text-sm font-semibold text-foreground">{name}</p>
-              <p className="text-sm text-muted">{plan}</p>
-              <Badge variant={statusVariant[status as keyof typeof statusVariant] ?? "default"}>
-                {status}
-              </Badge>
-              <p className="text-sm text-muted">{date}</p>
-            </div>
-          ))}
-        </div>
+        {subscriptions.length > 0 ? (
+          <div className="divide-y divide-border">
+            {subscriptions.map((row) => (
+              <div
+                key={row.id}
+                className="grid gap-2 px-5 py-4 sm:grid-cols-[1.5fr_1fr_0.8fr_1fr] sm:items-center sm:gap-4"
+              >
+                <p className="text-sm font-semibold text-foreground">{row.atelierName}</p>
+                <p className="text-sm text-muted">{row.planLabel}</p>
+                <Badge variant={statusVariant[row.statusKey] ?? "default"}>
+                  {row.statusLabel}
+                </Badge>
+                <p className="text-sm text-muted">{row.renewsAtLabel}</p>
+              </div>
+            ))}
+          </div>
+        ) : (
+          <p className="px-5 py-8 text-sm text-muted">
+            Aucun abonnement enregistré. Les abonnements apparaîtront ici lorsque des ateliers
+            seront activés.
+          </p>
+        )}
       </div>
     </DashboardShell>
   );

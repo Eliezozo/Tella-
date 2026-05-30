@@ -1,4 +1,3 @@
-import { tailorProfiles } from "@/lib/mock-data";
 import { normalizePhone } from "@/lib/phone";
 import type { TailorProfile } from "@/types";
 import type { AuthRepository } from "@/repositories/types";
@@ -29,7 +28,7 @@ function toAuthRecord(user: MockAuthRecord) {
   };
 }
 
-/** Compte démo : ama@tella.tg / TellaDemo2026 — lié à @atelier-ama */
+/** Compte admin local uniquement — pas d'ateliers fictifs. */
 const DEMO_PASSWORD_HASH =
   "$2b$12$Q53qfBzfD.fPRA2JIE.0VOEDR2fTcYsohuRzXrikMGgnBdK0kLgwC";
 
@@ -43,17 +42,6 @@ const mockUsers: MockAuthRecord[] = [
     role: "ADMIN",
     tailorProfileId: null,
     handle: null,
-    isApproved: true,
-  },
-  {
-    id: "u-demo-ama",
-    email: "ama@tella.tg",
-    phone: "+22890000001",
-    name: "Atelier Ama",
-    passwordHash: DEMO_PASSWORD_HASH,
-    role: "TAILOR",
-    tailorProfileId: "t1",
-    handle: "@atelier-ama",
     isApproved: true,
   },
 ];
@@ -94,11 +82,16 @@ export const mockAuthRepository: AuthRepository = {
     return user ? { id: user.id } : null;
   },
 
+  async findByAtelierName(atelierName) {
+    const normalized = atelierName.trim().toLowerCase();
+    const tailor = getDynamicTailors().find(
+      (item) => item.atelierName.trim().toLowerCase() === normalized,
+    );
+    return tailor ? { id: tailor.id } : null;
+  },
+
   async getAllHandles() {
-    return [
-      ...tailorProfiles.map((t) => t.handle),
-      ...dynamicTailors.map((t) => t.handle),
-    ];
+    return getDynamicTailors().map((t) => t.handle);
   },
 
   async registerTailor(payload) {

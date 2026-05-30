@@ -7,7 +7,7 @@ import { Button } from "@/components/ui/button";
 import { OptimizedImage } from "@/components/ui/optimized-image";
 import { categoryLabels } from "@/lib/constants/categories";
 import { toTailorProfilePath } from "@/lib/handle";
-import { buildWhatsappLink } from "@/hooks/build-whatsapp-link";
+import { buildTrackedWhatsappHref } from "@/lib/whatsapp-track";
 import { getCreationDetailPage } from "@/services/creation-service";
 import { formatCurrency } from "@/lib/utils";
 import { cn } from "@/lib/utils";
@@ -32,7 +32,8 @@ export default async function ProductDetailPage({
   const { product, tailor } = data;
   const availableSizes = product.availableSizes ?? ["XS", "S", "L", "XL"];
   const sizeGuide = buildSizeGuide(availableSizes);
-  const whatsappHref = buildWhatsappLink(
+  const whatsappHref = buildTrackedWhatsappHref(
+    tailor.id,
     tailor.whatsapp,
     `Bonjour, je vous contacte depuis Tella pour le modèle "${product.title}".`,
   );

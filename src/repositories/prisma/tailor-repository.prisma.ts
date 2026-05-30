@@ -79,6 +79,7 @@ export const prismaTailorRepository: TailorRepository = {
           ? {
               OR: [
                 { atelierName: { contains: query, mode: "insensitive" } },
+                { handle: { contains: query, mode: "insensitive" } },
                 { bio: { contains: query, mode: "insensitive" } },
                 { heroLabel: { contains: query, mode: "insensitive" } },
                 { specialties: { has: query } },
@@ -98,5 +99,16 @@ export const prismaTailorRepository: TailorRepository = {
       distinct: ["city"],
     });
     return rows.map((r) => r.city);
+  },
+
+  async updateProfileImages(id, data) {
+    const row = await prisma.tailorProfile.update({
+      where: { id },
+      data: {
+        ...(data.avatarUrl !== undefined ? { avatarUrl: data.avatarUrl } : {}),
+        ...(data.bannerUrl !== undefined ? { bannerUrl: data.bannerUrl } : {}),
+      },
+    });
+    return mapPrismaTailor(row);
   },
 };

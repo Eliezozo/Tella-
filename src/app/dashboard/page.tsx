@@ -5,6 +5,11 @@ import { DashboardShell } from "@/components/layout/dashboard-shell";
 import { Button } from "@/components/ui/button";
 import { toTailorProfilePath } from "@/lib/handle";
 import { requireSession } from "@/lib/session";
+import {
+  describeTailorHighlight,
+  getAdminDashboardStats,
+  getAdminTailorHighlights,
+} from "@/services/admin-dashboard-service";
 import { getCreationsByTailorId } from "@/services/creation-service";
 import { getTailorById } from "@/services/tailor-service";
 
@@ -114,11 +119,16 @@ export default async function DashboardPage() {
     );
   }
 
-  const stats = [
-    ["Couturières abonnées", "48", "+6 ce mois"],
-    ["Abonnements actifs", "41", "7 à relancer"],
-    ["Utilisatrices clientes", "1 284", "+18% ce mois"],
-    ["Demandes envoyées", "318", "Canal principal: WhatsApp"],
+  const [stats, highlights] = await Promise.all([
+    getAdminDashboardStats(),
+    getAdminTailorHighlights(),
+  ]);
+
+  const statCards = [
+    ["Ateliers inscrits", String(stats.totalTailors), `${stats.pendingTailors} en attente`],
+    ["Abonnements actifs", String(stats.activeSubscriptions), `${stats.subscriptionsToRenew} à relancer`],
+    ["Clientes inscrites", String(stats.totalClients), "Comptes CLIENT"],
+    ["Créations publiées", String(stats.totalCreations), `${stats.totalProfileViews} vues profil`],
   ];
 
   return (
@@ -128,7 +138,7 @@ export default async function DashboardPage() {
       description="Suivi des couturières inscrites, abonnements et activité générée par chaque atelier."
     >
       <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-4">
-        {stats.map(([label, value, note]) => (
+        {statCards.map(([label, value, note]) => (
           <article key={label} className="surface-card p-5">
             <p className="text-xs text-muted">{label}</p>
             <p className="heading-display mt-2 text-3xl">{value}</p>
@@ -138,19 +148,32 @@ export default async function DashboardPage() {
       </div>
       <div className="grid gap-4 lg:grid-cols-2">
         <div className="surface-card p-5">
-          <p className="text-sm font-semibold text-foreground">Suivi des ateliers</p>
+          <div className="flex items-center justify-between gap-3">
+            <p className="text-sm font-semibold text-foreground">Suivi des ateliers</p>
+            <Link href="/dashboard/demandes" className="text-xs font-semibold text-primary hover:underline">
+              Voir les demandes →
+            </Link>
+          </div>
           <div className="mt-4 space-y-3 text-sm text-muted">
-            <p>Atelier Ama: abonnement annuel actif jusqu&apos;au 30 juin 2026.</p>
-            <p>Studio Kekeli: relance trimestrielle à faire.</p>
-            <p>Mawufe Design: 84 nouvelles vues profil cette semaine.</p>
+            {highlights.length > 0 ? (
+              highlights.map((tailor) => (
+                <p key={tailor.id}>
+                  <span className="font-semibold text-foreground">{tailor.atelierName}</span>
+                  {": "}
+                  {describeTailorHighlight(tailor)}
+                </p>
+              ))
+            ) : (
+              <p>Aucun atelier enregistré pour le moment.</p>
+            )}
           </div>
         </div>
         <div className="surface-card p-5">
-          <p className="text-sm font-semibold text-foreground">Performance plateforme</p>
+          <p className="text-sm font-semibold text-foreground">État de la plateforme</p>
           <div className="mt-4 space-y-3 text-sm text-muted">
-            <p>Top canal: WhatsApp direct depuis les profils.</p>
-            <p>Top recherche: robes cérémonie et traditionnel.</p>
-            <p>Paiements: suivi manuel côté administration.</p>
+            <p>{stats.approvedTailors} compte{stats.approvedTailors > 1 ? "s" : ""} approuvé{stats.approvedTailors > 1 ? "s" : ""}.</p>
+            <p>{stats.publishedTailors} vitrine{stats.publishedTailors > 1 ? "s" : ""} publiée{stats.publishedTailors > 1 ? "s" : ""}.</p>
+            <p>{stats.pendingTailors} demande{stats.pendingTailors > 1 ? "s" : ""} d&apos;inscription en attente.</p>
           </div>
         </div>
       </div>

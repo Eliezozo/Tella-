@@ -1,15 +1,16 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
 
+import { ProfileViewTracker } from "@/components/analytics/profile-view-tracker";
 import { CreationCard } from "@/components/cards/creation-card";
 import { PageShell } from "@/components/layout/page-shell";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { OptimizedImage } from "@/components/ui/optimized-image";
-import { buildWhatsappLink } from "@/hooks/build-whatsapp-link";
 import { TailorOwnerBanner } from "@/components/dashboard/tailor-owner-banner";
 import { auth } from "@/auth";
 import { normalizeHandle } from "@/lib/handle";
+import { buildTrackedWhatsappHref } from "@/lib/whatsapp-track";
 import { getTailorProfilePage } from "@/services/tailor-service";
 
 export default async function TailorProfilePage({
@@ -32,13 +33,15 @@ export default async function TailorProfilePage({
     session?.user?.role === "TAILOR" &&
     session.user.tailorProfileId === profile.id;
 
-  const whatsappHref = buildWhatsappLink(
+  const whatsappHref = buildTrackedWhatsappHref(
+    profile.id,
     profile.whatsapp,
     "Bonjour, je vous contacte depuis Tella concernant un modèle.",
   );
 
   return (
     <PageShell>
+      <ProfileViewTracker tailorProfileId={profile.id} skip={isOwner} />
       {isOwner ? <TailorOwnerBanner atelierName={profile.atelierName} /> : null}
       <section className="section-padding">
         <div className="container-width grid gap-6 lg:grid-cols-[1fr_280px]">

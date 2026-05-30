@@ -28,6 +28,7 @@ export function isPrismaConnectionError(error: unknown): boolean {
 }
 
 export function shouldFallbackToMockOnDbError(): boolean {
+  if (process.env.USE_PRISMA === "true") return false;
   if (process.env.PRISMA_FALLBACK_MOCK === "true") return true;
   return process.env.NODE_ENV === "development";
 }

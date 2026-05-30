@@ -1,7 +1,7 @@
 import { getDataSourceMode } from "@/lib/data-source";
+import { notifyTailorAccountApproved } from "@/lib/notifications/notify-tailor-approved";
 import { prisma } from "@/lib/prisma";
 import { withPrismaRetry } from "@/lib/prisma-retry";
-import { withPrismaFallback } from "@/lib/with-prisma-fallback";
 import {
   approveTailorInMock,
   listPendingTailorsInMock,
@@ -43,20 +43,32 @@ async function listPendingTailorRegistrationsFromPrisma(): Promise<PendingTailor
 }
 
 export async function listPendingTailorRegistrations(): Promise<PendingTailorRegistration[]> {
-  return withPrismaFallback(
-    () => withPrismaRetry(listPendingTailorRegistrationsFromPrisma),
-    () => Promise.resolve(listPendingTailorsInMock()),
-  );
+  if (getDataSourceMode() !== "prisma") {
+    return listPendingTailorsInMock();
+  }
+  return withPrismaRetry(listPendingTailorRegistrationsFromPrisma);
 }
 
 export async function approveTailorProfile(tailorProfileId: string) {
   if (getDataSourceMode() === "prisma") {
-    await withPrismaRetry(() =>
+    const profile = await withPrismaRetry(() =>
       prisma.tailorProfile.update({
         where: { id: tailorProfileId },
         data: { isApproved: true },
+        include: { user: { select: { email: true } } },
       }),
     );
+
+    if (profile.user.email) {
+      void notifyTailorAccountApproved({
+        email: profile.user.email,
+        atelierName: profile.atelierName,
+        handle: profile.handle,
+        isPublished: profile.isPublished,
+      }).catch((error) => {
+        console.warn("[approveTailorProfile] email couturière non envoyé:", error);
+      });
+    }
     return;
   }
   approveTailorInMock(tailorProfileId);
@@ -64,12 +76,24 @@ export async function approveTailorProfile(tailorProfileId: string) {
 
 export async function publishTailorProfile(tailorProfileId: string) {
   if (getDataSourceMode() === "prisma") {
-    await withPrismaRetry(() =>
+    const profile = await withPrismaRetry(() =>
       prisma.tailorProfile.update({
         where: { id: tailorProfileId },
         data: { isApproved: true, isPublished: true },
+        include: { user: { select: { email: true } } },
       }),
     );
+
+    if (profile.user.email) {
+      void notifyTailorAccountApproved({
+        email: profile.user.email,
+        atelierName: profile.atelierName,
+        handle: profile.handle,
+        isPublished: true,
+      }).catch((error) => {
+        console.warn("[publishTailorProfile] email couturière non envoyé:", error);
+      });
+    }
     return;
   }
   publishTailorInMock(tailorProfileId);

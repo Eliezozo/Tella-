@@ -10,6 +10,7 @@ export function parseRegisterFormData(
     .filter(Boolean);
 
   return {
+    handle: String(formData.get("handle") ?? ""),
     atelierName: String(formData.get("atelierName") ?? ""),
     city: String(formData.get("city") ?? ""),
     whatsapp: String(formData.get("whatsapp") ?? ""),

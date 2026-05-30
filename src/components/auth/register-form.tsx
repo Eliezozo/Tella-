@@ -11,7 +11,7 @@ import { PasswordInput } from "@/components/ui/password-input";
 import { categoryLabels } from "@/lib/constants/categories";
 import { togoCities } from "@/lib/constants/cities";
 import { authFormInitialState } from "@/lib/auth-form-state";
-import { slugifyHandle } from "@/lib/handle";
+import { parseHandleInput } from "@/lib/handle";
 import {
   emptyRegisterDraft,
   mergeRegisterDraft,
@@ -34,6 +34,7 @@ const STEPS = [
 ] as const;
 
 const FIELD_STEP: Record<string, number> = {
+  handle: 1,
   atelierName: 1,
   city: 1,
   heroLabel: 1,
@@ -82,13 +83,10 @@ export function RegisterForm() {
     authFormInitialState,
   );
 
-  const handlePreview = useMemo(
-    () =>
-      draft.atelierName.trim().length >= 2
-        ? slugifyHandle(draft.atelierName)
-        : "@atelier",
-    [draft.atelierName],
-  );
+  const handlePreview = useMemo(() => {
+    const parsed = parseHandleInput(draft.handle || draft.atelierName);
+    return parsed.length >= 3 ? parsed : "@atelier";
+  }, [draft.handle, draft.atelierName]);
 
   const mergedErrors = state.fieldErrors ?? stepErrors;
 
@@ -217,8 +215,30 @@ export function RegisterForm() {
       {displayStep === 1 ? (
         <div className="space-y-4">
           <p className="text-sm text-muted">
-            Étape 1 — Présentez votre atelier. Votre identifiant public sera généré
-            automatiquement.
+            Étape 1 — Présentez votre atelier avec un identifiant public unique et un nom
+            distinct pour faciliter la recherche.
+          </p>
+          <FormField
+            label="Identifiant public"
+            name="handle"
+            error={fieldError(mergedErrors, "handle")}
+            required={false}
+          >
+            <input
+              name="handle"
+              value={draft.handle}
+              onChange={(event) =>
+                setDraft((current) =>
+                  mergeRegisterDraft(current, { handle: event.target.value }),
+                )
+              }
+              placeholder="@atelier-ama"
+              className={inputClassName}
+            />
+          </FormField>
+          <p className="text-xs text-muted">
+            Lien de votre vitrine :{" "}
+            <span className="font-semibold text-primary">{handlePreview}</span>
           </p>
           <FormField
             label="Nom de l'atelier"
@@ -239,9 +259,7 @@ export function RegisterForm() {
             />
           </FormField>
           <p className="text-xs text-muted">
-            Profil public prévu :{" "}
-            <span className="font-semibold text-primary">{handlePreview}</span>
-            <span className="text-muted"> (peut varier si le nom existe déjà)</span>
+            Nom affiché aux clientes — doit être unique sur Tella.
           </p>
           <FormField
             label="Ville"

@@ -1,8 +1,18 @@
 import { z } from "zod";
 
 import { togoCities } from "@/lib/constants/cities";
+import { isValidHandle, parseHandleInput } from "@/lib/handle";
 
 const registerTailorBaseSchema = z.object({
+  handle: z
+    .string()
+    .min(3, "L'identifiant public doit contenir au moins 3 caractères.")
+    .max(42)
+    .transform(parseHandleInput)
+    .refine(isValidHandle, {
+      message:
+        "Identifiant invalide. Utilisez lettres, chiffres et tirets (ex. @atelier-ama).",
+    }),
   atelierName: z
     .string()
     .min(2, "Le nom de l'atelier doit contenir au moins 2 caractères.")

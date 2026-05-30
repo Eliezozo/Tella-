@@ -19,6 +19,7 @@ async function requireAdmin() {
 export async function approveTailorAction(tailorProfileId: string) {
   await requireAdmin();
   await approveTailorProfile(tailorProfileId);
+  revalidatePath("/dashboard");
   revalidatePath("/dashboard/demandes");
   revalidatePath("/explore");
 }
@@ -26,6 +27,7 @@ export async function approveTailorAction(tailorProfileId: string) {
 export async function publishTailorAction(tailorProfileId: string) {
   await requireAdmin();
   await publishTailorProfile(tailorProfileId);
+  revalidatePath("/dashboard");
   revalidatePath("/dashboard/demandes");
   revalidatePath("/explore");
 }

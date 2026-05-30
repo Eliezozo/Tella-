@@ -1,5 +1,5 @@
 import { getDataSourceMode } from "@/lib/data-source";
-import { ensureUniqueHandle, slugifyHandle } from "@/lib/handle";
+import { normalizeHandle } from "@/lib/handle";
 import { hashPassword, verifyPassword } from "@/lib/password";
 import { normalizePhone } from "@/lib/phone";
 import { withPrismaRetry } from "@/lib/prisma-retry";
@@ -21,6 +21,8 @@ export type AuthErrorCode =
   | "VALIDATION"
   | "EMAIL_EXISTS"
   | "PHONE_EXISTS"
+  | "HANDLE_EXISTS"
+  | "ATELIER_NAME_EXISTS"
   | "INVALID_CREDENTIALS"
   | "NO_PASSWORD"
   | "ACCOUNT_PENDING";
@@ -112,8 +114,26 @@ export async function registerTailor(
   }
 
   const handles = await runAuthDb(() => repo.getAllHandles());
-  const baseHandle = slugifyHandle(parsed.data.atelierName);
-  const handle = ensureUniqueHandle(baseHandle, handles);
+  const handle = normalizeHandle(parsed.data.handle);
+  if (handles.includes(handle)) {
+    throw new AuthServiceError(
+      "Cet identifiant public est déjà utilisé. Choisissez-en un autre.",
+      "HANDLE_EXISTS",
+      { handle: ["Identifiant déjà pris."] },
+    );
+  }
+
+  const existingAtelier = await runAuthDb(() =>
+    repo.findByAtelierName(parsed.data.atelierName),
+  );
+  if (existingAtelier) {
+    throw new AuthServiceError(
+      "Ce nom d'atelier est déjà utilisé. Choisissez un nom distinct.",
+      "ATELIER_NAME_EXISTS",
+      { atelierName: ["Nom d'atelier déjà enregistré."] },
+    );
+  }
+
   const passwordHash = await hashPassword(parsed.data.password);
 
   const heroLabel =
@@ -189,13 +209,5 @@ export async function authenticateUser(
 }
 
 export function getDemoCredentialsHint(): string | null {
-  if (process.env.NODE_ENV === "production") {
-    return null;
-  }
-
-  if (getDataSourceMode() !== "mock") {
-    return null;
-  }
-
-  return "Mode démonstration local : ama@tella.tg / TellaDemo2026";
+  return null;
 }
